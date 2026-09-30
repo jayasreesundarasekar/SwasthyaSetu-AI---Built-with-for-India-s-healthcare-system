@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwasthyaSetu Phase 5 - Wow Factor National Intelligence</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body, #root { height: 100%; width: 100%; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0e27;
+            color: #fff;
+            overflow: hidden;
+        }
+        
+        :root {
+            --primary: #0F4C75;
+            --primary-light: #1a6fa0;
+            --success: #3ECF8E;
+            --warning: #F7B32B;
+            --danger: #E63946;
+            --neutral-100: #f3f4f6;
+            --neutral-200: #e5e7eb;
+        }
+        
+        .app-layout {
+            display: flex;
+            height: 100vh;
+            gap: 0;
+        }
+        
+        .sidebar {
+            width: 220px;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            border-right: 1px solid rgba(15, 76, 117, 0.2);
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+        
+        .sidebar-item {
+            padding: 12px 16px;
+            margin: 4px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+            color: #9ca3af;
+        }
+        
+        .sidebar-item:hover {
+            background: rgba(15, 76, 117, 0.2);
+            color: var(--primary-light);
+        }
+        
+        .sidebar-item.active {
+            background: rgba(15, 76, 117, 0.3);
+            border-left-color: var(--primary-light);
+            color: var(--primary-light);
+            font-weight: 600;
+        }
+        
+        .sidebar-title {
+            padding: 16px;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #4b5563;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0F4C75 0%, #1a6fa0 100%);
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-title {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        
+        .emergency-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(230, 57, 70, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--danger);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(15, 76, 117, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .network-container {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .network-tree {
+            flex: 1;
+            font-family: monospace;
+            font-size: 12px;
+            line-height: 1.8;
+            background: rgba(10, 14, 39, 0.5);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(15, 76, 117, 0.3);
+            color: #9ca3af;
+        }
+        
+        .node {
+            margin-left: 20px;
+            padding: 6px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .node:hover {
+            background: rgba(15, 76, 117, 0.2);
+            color: var(--primary-light);
+        }
+        
+        .node-status {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        
+        .status-green { background: #3ECF8E; }
+        .status-yellow { background: #F7B32B; }
+        .status-orange { background: #fd7e14; }
+        .status-red { background: #E63946; }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(15, 76, 117, 0.2);
+            border-radius: 10px;
+            padding: 16px;
+        }
+        
+        .card-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--primary-light);
+        }
+        
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(15, 76, 117, 0.1);
+            font-size: 13px;
+        }
+        
+        .metric:last-child { border-bottom: none; }
+        
+        .metric-value {
+            font-weight: 600;
+            color: var(--primary-light);
+        }
+        
+        .stress-gauge {
+            width: 100%;
+            height: 8px;
+            background: rgba(15, 76, 117, 0.1);
+            border-radius: 4px;
+            margin: 8px 0;
+            overflow: hidden;
+        }
+        
+        .stress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3ECF8E 0%, #F7B32B 50%, #E63946 100%);
+            transition: width 0.6s ease;
+        }
+        
+        .action-item {
+            background: rgba(230, 57, 70, 0.1);
+            border-left: 4px solid var(--danger);
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+        }
+        
+        .action-item:hover {
+            background: rgba(230, 57, 70, 0.2);
+        }
+        
+        .action-number {
+            display: inline-block;
+            background: var(--danger);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+        
+        .explanation-box {
+            background: rgba(15, 76, 117, 0.1);
+            border: 1px solid rgba(15, 76, 117, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin: 12px 0;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        .causal-chain {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 8px 0;
+            font-size: 12px;
+        }
+        
+        .causal-item {
+            background: rgba(15, 76, 117, 0.2);
+            padding: 4px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+        
+        .arrow {
+            color: var(--primary-light);
+            font-weight: bold;
+        }
+        
+        .flow-visualization {
+            display: flex;
+            gap: 16px;
+            margin: 16px 0;
+            padding: 16px;
+            background: rgba(10, 14, 39, 0.5);
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        
+        .flow-stage {
+            min-width: 120px;
+            text-align: center;
+            padding: 12px;
+            background: rgba(15, 76, 117, 0.2);
+            border-radius: 8px;
+            border: 1px solid rgba(15, 76, 117, 0.3);
+            font-size: 12px;
+        }
+        
+        .flow-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .flow-label {
+            color: #9ca3af;
+            font-size: 11px;
+        }
+        
+        .simulator-section {
+            background: rgba(79, 70, 229, 0.1);
+            border: 1px solid rgba(79, 70, 229, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+        }
+        
+        .input-group {
+            margin: 12px 0;
+        }
+        
+        .input-label {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-bottom: 4px;
+        }
+        
+        .input-slider {
+            width: 100%;
+            height: 6px;
+            background: rgba(15, 76, 117, 0.2);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .input-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--primary-light);
+            cursor: pointer;
+            border-radius: 50%;
+        }
+        
+        .input-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: var(--primary-light);
+            cursor: pointer;
+            border-radius: 50%;
+            border: none;
+        }
+        
+        .simulation-result {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .result-box {
+            background: rgba(10, 14, 39, 0.5);
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary-light);
+            font-size: 12px;
+        }
+        
+        .result-label {
+            color: #9ca3af;
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
+        
+        .result-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-light);
+        }
+        
+        .result-box.at-risk {
+            border-left-color: var(--danger);
+        }
+        
+        .result-box.warning {
+            border-left-color: var(--warning);
+        }
+        
+        .confidence-indicator {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(15, 76, 117, 0.2);
+            border-radius: 20px;
+            font-size: 11px;
+            margin: 4px 0;
+        }
+        
+        .data-quality {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            margin-top: 8px;
+        }
+        
+        .quality-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #3ECF8E;
+        }
+        
+        .quality-dot.warning {
+            background: #F7B32B;
+        }
+        
+        .quality-dot.poor {
+            background: #E63946;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 250px;
+            margin: 20px 0;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: var(--primary-light);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0F4C75;
+        }
+        
+        .btn-secondary {
+            background: rgba(15, 76, 117, 0.2);
+            color: var(--primary-light);
+            border: 1px solid rgba(15, 76, 117, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(15, 76, 117, 0.3);
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        @media (max-width: 1200px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .sidebar { width: 180px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        
+        function Phase5WowFactor() {
+            const [currentView, setCurrentView] = useState('digital-twin');
+            const [emergencyMode, setEmergencyMode] = useState(false);
+            const [selectedPHC, setSelectedPHC] = useState(null);
+            const [simulationParams, setSimulationParams] = useState({
+                footfall_increase: 30,
+                supply_decrease: 10
+            });
+            const chartsRef = useRef({});
+            
+            // Network state simulation
+            const [networkState, setNetworkState] = useState({
+                states: [
+                    { id: 'mh', name: 'Maharashtra', phcs: 120, status: 'green', stress: 35 },
+                    { id: 'tn', name: 'Tamil Nadu', phcs: 95, status: 'yellow', stress: 68 },
+                    { id: 'kn', name: 'Karnataka', phcs: 110, status: 'green', stress: 42 },
+                    { id: 'tg', name: 'Telangana', phcs: 85, status: 'orange', stress: 78 },
+                    { id: 'ap', name: 'Andhra Pradesh', phcs: 100, status: 'red', stress: 92 }
+                ]
+            });
+            
+            const aiActions = [
+                {
+                    id: 1,
+                    severity: 'critical',
+                    location: 'Telangana District A',
+                    issue: 'Medicine shortage predicted in 4 days',
+                    action: 'Review transfer from neighboring district',
+                    confidence: 91
+                },
+                {
+                    id: 2,
+                    severity: 'warning',
+                    location: 'Tamil Nadu PHC 108',
+                    issue: 'Bed capacity projected to exceed threshold (92% → 105%)',
+                    action: 'Review bed diversion to nearby facilities',
+                    confidence: 87
+                },
+                {
+                    id: 3,
+                    severity: 'warning',
+                    location: 'Andhra Pradesh District C',
+                    issue: 'Workforce availability declining (-12% week-over-week)',
+                    action: 'Review staffing situation with HR',
+                    confidence: 79
+                }
+            ];
+            
+            const rootCauseAnalysis = {
+                prediction: 'Medicine stock-out predicted in 4 days',
+                confidence: 92,
+                factors: [
+                    { factor: 'Current Stock', value: '840 units', impact: 'Base inventory' },
+                    { factor: 'Daily Consumption', value: '170 units', impact: 'Stable baseline' },
+                    { factor: 'Expected Demand', value: '+38% increase', impact: 'Key driver' },
+                    { factor: 'Incoming Supply', value: '200 units', impact: 'Insufficient coverage' },
+                    { factor: 'Safety Threshold', value: '500 units', impact: 'Critical marker' }
+                ],
+                explanation: 'Demand is increasing faster than replenishment. At the current consumption rate + anticipated demand surge, available stock may fall below the safety threshold in approximately 4 days. Recommend immediate supply coordination.',
+                dataQuality: 'Good'
+            };
+            
+            const phcHealthScorecard = {
+                phc: 'PHC 1047',
+                scores: [
+                    { label: 'Resource Stability', value: 91, status: 'green' },
+                    { label: 'Medicine Coverage', value: 14, status: 'green', unit: 'days' },
+                    { label: 'Bed Capacity', value: 68, status: 'yellow', unit: '%' },
+                    { label: 'Workforce', value: 94, status: 'green', unit: '%' },
+                    { label: 'Patient Load', value: '+18%', status: 'yellow' },
+                    { label: 'Supply Reliability', value: 87, status: 'green', unit: '%' }
+                ],
+                outlook: 'Stable today → Moderate pressure expected in 5–7 days'
+            };
+            
+            // Run simulation
+            const runSimulation = () => {
+                const demandIncrease = simulationParams.footfall_increase;
+                const supplyDecrease = simulationParams.supply_decrease;
+                
+                const consumption_increase = (demandIncrease * 0.85).toFixed(1);
+                const bed_pressure = (65 + demandIncrease * 0.6).toFixed(1);
+                const medicine_risk = (100 - supplyDecrease - (demandIncrease * 0.5)).toFixed(1);
+                
+                return {
+                    consumption_increase: `+${consumption_increase}%`,
+                    bed_pressure: `${bed_pressure}%`,
+                    medicine_risk: `${medicine_risk}%`,
+                    at_risk: bed_pressure > 85 || medicine_risk < 30
+                };
+            };
+            
+            const simulation = runSimulation();
+            
+            return (
+                <div className="app-layout">
+                    {/* Sidebar */}
+                    <div className="sidebar">
+                        <div style={{padding: '0 16px', marginBottom: '20px'}}>
+                            <div style={{fontSize: '16px', fontWeight: '700', marginBottom: '4px'}}>🎯 SwasthyaSetu</div>
+                            <div style={{fontSize: '11px', color: '#4b5563'}}>Phase 5: Wow Factor</div>
+                        </div>
+                        
+                        <div className="sidebar-title">Intelligence Features</div>
+                        <div 
+                            className={`sidebar-item ${currentView === 'digital-twin' ? 'active' : ''}`}
+                            onClick={() => setCurrentView('digital-twin')}
+                        >
+                            🇮🇳 Digital Twin
+                        </div>
+                        <div 
+                            className={`sidebar-item ${currentView === 'simulator' ? 'active' : ''}`}
+                            onClick={() => setCurrentView('simulator')}
+                        >
+                            🔮 What-If Simulator
+                        </div>
+                        <div 
+                            className={`sidebar-item ${currentView === 'root-cause' ? 'active' : ''}`}
+                            onClick={() => setCurrentView('root-cause')}
+                        >
+                            🧠 Root Cause Engine
+                        </div>
+                        <div 
+                            className={`sidebar-item ${currentView === 'resource-flow' ? 'active' : ''}`}
+                            onClick={() => setCurrentView('resource-flow')}
+                        >
+                            🚚 Resource Flow Map
+                        </div>
+                        <div 
+                            className={`sidebar-item ${currentView === 'action-center' ? 'active' : ''}`}
+                            onClick={() => setCurrentView('action-center')}
+                        >
+                            📊 AI Action Center
+                        </div>
+                        
+                        <div className="sidebar-title">Operational</div>
+                        <div 
+                            className={`sidebar-item ${currentView === 'scorecard' ? 'active' : ''}`}
+                            onClick={() => setCurrentView('scorecard')}
+                        >
+                            💼 PHC Scorecard
+                        </div>
+                        <div 
+                            className={`sidebar-item ${currentView === 'expiry' ? 'active' : ''}`}
+                            onClick={() => setCurrentView('expiry')}
+                        >
+                            ⚠️ Expiry Radar
+                        </div>
+                        <div 
+                            className={`sidebar-item ${currentView === 'learning' ? 'active' : ''}`}
+                            onClick={() => setCurrentView('learning')}
+                        >
+                            🔄 Closed-Loop Learning
+                        </div>
+                    </div>
+                    
+                    {/* Main Content */}
+                    <div className="main-content">
+                        <div className="header">
+                            <div>
+                                <div className="header-title">
+                                    {currentView === 'digital-twin' && '🇮🇳 Health Network Digital Twin'}
+                                    {currentView === 'simulator' && '🔮 What-If Emergency Simulator'}
+                                    {currentView === 'root-cause' && '🧠 AI Root Cause Engine'}
+                                    {currentView === 'resource-flow' && '🚚 Resource Flow Map'}
+                                    {currentView === 'action-center' && '📊 AI Action Center'}
+                                    {currentView === 'scorecard' && '💼 PHC Health Scorecard'}
+                                    {currentView === 'expiry' && '⚠️ Medicine Expiry Radar'}
+                                    {currentView === 'learning' && '🔄 Closed-Loop Learning System'}
+                                </div>
+                            </div>
+                            <button 
+                                className={`${emergencyMode ? 'emergency-badge' : ''}`}
+                                onClick={() => setEmergencyMode(!emergencyMode)}
+                                style={{background: emergencyMode ? 'rgba(230, 57, 70, 0.2)' : 'rgba(62, 207, 142, 0.2)', border: emergencyMode ? '1px solid #E63946' : '1px solid #3ECF8E', padding: '8px 16px', borderRadius: '20px', cursor: 'pointer', color: emergencyMode ? '#E63946' : '#3ECF8E', fontSize: '12px'}}
+                            >
+                                {emergencyMode ? '🚨 EMERGENCY MODE ON' : '✓ Normal Operations'}
+                            </button>
+                        </div>
+                        
+                        <div className="content">
+                            
+                            {/* Digital Twin */}
+                            {currentView === 'digital-twin' && (
+                                <>
+                                    <div className="section">
+                                        <div className="section-title">Live Network State Visualization</div>
+                                        <div className="network-container">
+                                            <div style={{flex: 1}}>
+                                                <div className="network-tree">
+                                                    <div>🇮🇳 INDIA (426 PHCs)</div>
+                                                    {networkState.states.map((state, idx) => (
+                                                        <div key={idx}>
+                                                            <div 
+                                                                className="node"
+                                                                onClick={() => setSelectedPHC(state)}
+                                                            >
+                                                                <span className={`node-status status-${state.status}`}></span>
+                                                                {state.name} ({state.phcs} PHCs)
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <div style={{flex: 1}}>
+                                                <div className="section-title" style={{marginBottom: '12px'}}>Network Resource Stress Index</div>
+                                                {networkState.states.map((state, idx) => (
+                                                    <div key={idx} style={{marginBottom: '16px'}}>
+                                                        <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '12px'}}>
+                                                            <span>{state.name}</span>
+                                                            <span style={{color: state.stress > 70 ? '#E63946' : state.stress > 50 ? '#F7B32B' : '#3ECF8E'}}>
+                                                                {state.stress}/100
+                                                            </span>
+                                                        </div>
+                                                        <div className="stress-gauge">
+                                                            <div className="stress-fill" style={{width: `${state.stress}%`}}></div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    {selectedPHC && (
+                                        <div className="section">
+                                            <div className="section-title">State Details: {selectedPHC.name}</div>
+                                            <div className="grid-2">
+                                                <div className="card">
+                                                    <div className="card-title">Operational Metrics</div>
+                                                    <div className="metric">
+                                                        <span>PHCs Active</span>
+                                                        <span className="metric-value">{selectedPHC.phcs}</span>
+                                                    </div>
+                                                    <div className="metric">
+                                                        <span>Resource Stress</span>
+                                                        <span className="metric-value">{selectedPHC.stress}%</span>
+                                                    </div>
+                                                    <div className="metric">
+                                                        <span>Status</span>
+                                                        <span className="metric-value" style={{textTransform: 'capitalize'}}>
+                                                            {selectedPHC.status === 'green' ? '🟢 Healthy' : selectedPHC.status === 'yellow' ? '🟡 Alert' : selectedPHC.status === 'orange' ? '🟠 At Risk' : '🔴 Critical'}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="card">
+                                                    <div className="card-title">Forecast (7 days)</div>
+                                                    <div className="metric">
+                                                        <span>Medicine Availability</span>
+                                                        <span className="metric-value">✓ Stable</span>
+                                                    </div>
+                                                    <div className="metric">
+                                                        <span>Bed Capacity</span>
+                                                        <span className="metric-value">⚠️ Rising</span>
+                                                    </div>
+                                                    <div className="metric">
+                                                        <span>Patient Footfall</span>
+                                                        <span className="metric-value">↑ +18%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </>
+                            )}
+                            
+                            {/* What-If Simulator */}
+                            {currentView === 'simulator' && (
+                                <>
+                                    <div className="section simulator-section">
+                                        <div className="section-title">Scenario Modeling</div>
+                                        
+                                        <div className="input-group">
+                                            <div className="input-label">📈 Patient Footfall Increase: {simulationParams.footfall_increase}%</div>
+                                            <input 
+                                                type="range" 
+                                                min="0" 
+                                                max="100" 
+                                                value={simulationParams.footfall_increase}
+                                                onChange={(e) => setSimulationParams({...simulationParams, footfall_increase: parseInt(e.target.value)})}
+                                                className="input-slider"
+                                            />
+                                        </div>
+                                        
+                                        <div className="input-group">
+                                            <div className="input-label">📉 Supply Disruption: {simulationParams.supply_decrease}%</div>
+                                            <input 
+                                                type="range" 
+                                                min="0" 
+                                                max="50" 
+                                                value={simulationParams.supply_decrease}
+                                                onChange={(e) => setSimulationParams({...simulationParams, supply_decrease: parseInt(e.target.value)})}
+                                                className="input-slider"
+                                            />
+                                        </div>
+                                        
+                                        <button className="btn btn-primary" style={{marginTop: '16px', width: '100%'}}>⚡ Run Simulation</button>
+                                    </div>
+                                    
+                                    <div className="section">
+                                        <div className="section-title">Simulation Results</div>
+                                        <div className="simulation-result">
+                                            <div className={`result-box ${simulation.bed_pressure > 85 ? 'at-risk' : ''}`}>
+                                                <div className="result-label">Bed Occupancy</div>
+                                                <div className="result-value">{simulation.bed_pressure}%</div>
+                                            </div>
+                                            <div className={`result-box ${simulation.medicine_risk < 30 ? 'at-risk' : simulation.medicine_risk < 50 ? 'warning' : ''}`}>
+                                                <div className="result-label">Medicine Availability</div>
+                                                <div className="result-value">{simulation.medicine_risk}%</div>
+                                            </div>
+                                            <div className="result-box">
+                                                <div className="result-label">Demand Increase</div>
+                                                <div className="result-value">{simulation.consumption_increase}</div>
+                                            </div>
+                                            <div className={`result-box ${simulation.at_risk ? 'at-risk' : ''}`}>
+                                                <div className="result-label">Network Status</div>
+                                                <div className="result-value">{simulation.at_risk ? '🔴 Critical' : '🟢 Stable'}</div>
+                                            </div>
+                                        </div>
+                                        
+                                        {simulation.at_risk && (
+                                            <div className="explanation-box">
+                                                <strong>AI Intervention Recommended:</strong><br/>
+                                                Deploy emergency resource redistribution. Activate surge protocols in bed-constrained areas. Consider temporary supply rerouting from low-pressure districts.
+                                            </div>
+                                        )}
+                                    </div>
+                                </>
+                            )}
+                            
+                            {/* Root Cause Engine */}
+                            {currentView === 'root-cause' && (
+                                <>
+                                    <div className="section">
+                                        <div className="section-title">Prediction: {rootCauseAnalysis.prediction}</div>
+                                        <div className="confidence-indicator">
+                                            Confidence: {rootCauseAnalysis.confidence}%
+                                        </div>
+                                        
+                                        <div style={{marginTop: '16px', fontSize: '13px', fontWeight: '600', marginBottom: '12px'}}>🔍 Causal Factor Breakdown:</div>
+                                        {rootCauseAnalysis.factors.map((f, idx) => (
+                                            <div key={idx} className="causal-chain">
+                                                <div className="causal-item"><strong>{f.factor}</strong></div>
+                                                <span className="arrow">→</span>
+                                                <div className="causal-item">{f.value}</div>
+                                                <span className="arrow">→</span>
+                                                <div className="causal-item" style={{color: '#9ca3af'}}>{f.impact}</div>
+                                            </div>
+                                        ))}
+                                        
+                                        <div className="explanation-box">
+                                            <strong>🤖 AI Explanation:</strong><br/>
+                                            {rootCauseAnalysis.explanation}
+                                        </div>
+                                        
+                                        <div className="data-quality">
+                                            <div className="quality-dot"></div>
+                                            <span>Data Quality: {rootCauseAnalysis.dataQuality}</span>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                            
+                            {/* Resource Flow Map */}
+                            {currentView === 'resource-flow' && (
+                                <>
+                                    <div className="section">
+                                        <div className="section-title">Supply Chain Flow</div>
+                                        <div className="flow-visualization">
+                                            <div className="flow-stage">
+                                                <div className="flow-icon">🏭</div>
+                                                <div className="flow-label">Central Stockpile</div>
+                                                <div style={{fontSize: '13px', fontWeight: '600', marginTop: '6px'}}>2,400 units</div>
+                                            </div>
+                                            <div style={{display: 'flex', alignItems: 'center', color: '#9ca3af'}}>→</div>
+                                            <div className="flow-stage">
+                                                <div className="flow-icon">🏛️</div>
+                                                <div className="flow-label">State Hub</div>
+                                                <div style={{fontSize: '13px', fontWeight: '600', marginTop: '6px'}}>1,200 units</div>
+                                            </div>
+                                            <div style={{display: 'flex', alignItems: 'center', color: '#9ca3af'}}>→</div>
+                                            <div className="flow-stage">
+                                                <div className="flow-icon">📍</div>
+                                                <div className="flow-label">District</div>
+                                                <div style={{fontSize: '13px', fontWeight: '600', marginTop: '6px'}}>450 units</div>
+                                            </div>
+                                            <div style={{display: 'flex', alignItems: 'center', color: '#9ca3af'}}>→</div>
+                                            <div className="flow-stage">
+                                                <div className="flow-icon">🏥</div>
+                                                <div className="flow-label">PHC</div>
+                                                <div style={{fontSize: '13px', fontWeight: '600', marginTop: '6px'}}>150 units</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="section">
+                                        <div className="section-title">🚨 Supply Disruption Detected</div>
+                                        <div className="explanation-box">
+                                            <strong>Critical Shortfall Identified:</strong><br/>
+                                            Tamil Nadu District A: Supply line interrupted. Current stock: 150 units. Daily consumption: 120 units.<br/><br/>
+                                            <strong>AI Recommendation:</strong> Reroute 500 units from Karnataka surplus (+800 units available). Estimated delivery: 4 hours. Impact: Restores 8-day safety buffer.
+                                        </div>
+                                        <button className="btn btn-primary" style={{marginTop: '12px'}}>✓ Execute Alternate Route</button>
+                                    </div>
+                                </>
+                            )}
+                            
+                            {/* AI Action Center */}
+                            {currentView === 'action-center' && (
+                                <>
+                                    <div className="section">
+                                        <div className="section-title">🎯 What Needs Attention ({aiActions.length} Critical Actions)</div>
+                                        {aiActions.map((action) => (
+                                            <div key={action.id} className="action-item">
+                                                <span className="action-number">{action.id}</span>
+                                                <div style={{flex: 1}}>
+                                                    <div style={{fontWeight: '600', marginBottom: '4px'}}>{action.location}</div>
+                                                    <div style={{color: '#9ca3af', fontSize: '12px', marginBottom: '6px'}}>{action.issue}</div>
+                                                    <div style={{color: '#9ca3af', fontSize: '12px'}}>→ {action.action}</div>
+                                                    <div style={{marginTop: '4px', fontSize: '11px', color: '#4b5563'}}>Confidence: {action.confidence}%</div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+                            
+                            {/* PHC Scorecard */}
+                            {currentView === 'scorecard' && (
+                                <>
+                                    <div className="section">
+                                        <div className="section-title">{phcHealthScorecard.phc} - Operational Health Snapshot</div>
+                                        <div className="grid-2">
+                                            {phcHealthScorecard.scores.map((score, idx) => (
+                                                <div key={idx} className="card">
+                                                    <div className="card-title">{score.label}</div>
+                                                    <div style={{fontSize: '24px', fontWeight: '700', color: score.status === 'green' ? '#3ECF8E' : '#F7B32B', marginBottom: '8px'}}>
+                                                        {score.value}{score.unit ? ' ' + score.unit : ''}
+                                                    </div>
+                                                    <div className="stress-gauge">
+                                                        <div className="stress-fill" style={{width: `${Math.min(score.value, 100)}%`, background: score.status === 'green' ? '#3ECF8E' : '#F7B32B'}}></div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className="explanation-box" style={{marginTop: '16px'}}>
+                                            <strong>AI Outlook:</strong> {phcHealthScorecard.outlook}
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                            
+                            {/* Expiry Radar */}
+                            {currentView === 'expiry' && (
+                                <>
+                                    <div className="section">
+                                        <div className="section-title">⚠️ Medicine Expiry Risk Detection</div>
+                                        <div className="explanation-box">
+                                            <strong>🚨 2,400 units at expiry risk</strong><br/>
+                                            Across 14 PHCs, medicines expiring within 60 days detected.
+                                        </div>
+                                        <div className="grid-2" style={{marginTop: '16px'}}>
+                                            <div className="card">
+                                                <div className="card-title">Paracetamol 500mg</div>
+                                                <div className="metric">
+                                                    <span>Expiring</span>
+                                                    <span className="metric-value">32 days</span>
+                                                </div>
+                                                <div className="metric">
+                                                    <span>Quantity at Risk</span>
+                                                    <span className="metric-value">1,200 units</span>
+                                                </div>
+                                                <div className="metric">
+                                                    <span>PHCs Affected</span>
+                                                    <span className="metric-value">8</span>
+                                                </div>
+                                                <button className="btn btn-primary" style={{marginTop: '12px', width: '100%'}}>Redistribute</button>
+                                            </div>
+                                            <div className="card">
+                                                <div className="card-title">Amoxicillin 250mg</div>
+                                                <div className="metric">
+                                                    <span>Expiring</span>
+                                                    <span className="metric-value">48 days</span>
+                                                </div>
+                                                <div className="metric">
+                                                    <span>Quantity at Risk</span>
+                                                    <span className="metric-value">1,200 units</span>
+                                                </div>
+                                                <div className="metric">
+                                                    <span>PHCs Affected</span>
+                                                    <span className="metric-value">6</span>
+                                                </div>
+                                                <button className="btn btn-primary" style={{marginTop: '12px', width: '100%'}}>Redistribute</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                            
+                            {/* Closed-Loop Learning */}
+                            {currentView === 'learning' && (
+                                <>
+                                    <div className="section">
+                                        <div className="section-title">🔄 Closed-Loop Learning Cycle</div>
+                                        <div className="flow-visualization" style={{flexDirection: 'column', alignItems: 'center', gap: '8px'}}>
+                                            <div style={{display: 'flex', alignItems: 'center', gap: '12px', width: '100%', justifyContent: 'center'}}>
+                                                <div style={{flex: 0.5, textAlign: 'center'}}>
+                                                    <div style={{fontSize: '20px', marginBottom: '8px'}}>1️⃣</div>
+                                                    <div style={{fontSize: '12px'}}>📊 FORECAST</div>
+                                                    <div style={{fontSize: '11px', color: '#9ca3af', marginTop: '4px'}}>Predict demand</div>
+                                                </div>
+                                                <div style={{fontSize: '20px', color: '#9ca3af'}}>↓</div>
+                                                <div style={{flex: 0.5, textAlign: 'center'}}>
+                                                    <div style={{fontSize: '20px', marginBottom: '8px'}}>2️⃣</div>
+                                                    <div style={{fontSize: '12px'}}>⚡ ACTION</div>
+                                                    <div style={{fontSize: '11px', color: '#9ca3af', marginTop: '4px'}}>Recommend transfers</div>
+                                                </div>
+                                                <div style={{fontSize: '20px', color: '#9ca3af'}}>↓</div>
+                                                <div style={{flex: 0.5, textAlign: 'center'}}>
+                                                    <div style={{fontSize: '20px', marginBottom: '8px'}}>3️⃣</div>
+                                                    <div style={{fontSize: '12px'}}>🚚 EXECUTE</div>
+                                                    <div style={{fontSize: '11px', color: '#9ca3af', marginTop: '4px'}}>Redistribute resources</div>
+                                                </div>
+                                            </div>
+                                            <div style={{fontSize: '20px', color: '#9ca3af'}}>↓</div>
+                                            <div style={{display: 'flex', alignItems: 'center', gap: '12px', width: '100%', justifyContent: 'center'}}>
+                                                <div style={{flex: 0.5, textAlign: 'center'}}>
+                                                    <div style={{fontSize: '20px', marginBottom: '8px'}}>4️⃣</div>
+                                                    <div style={{fontSize: '12px'}}>📈 OBSERVE</div>
+                                                    <div style={{fontSize: '11px', color: '#9ca3af', marginTop: '4px'}}>Actual consumption</div>
+                                                </div>
+                                                <div style={{fontSize: '20px', color: '#9ca3af'}}>↓</div>
+                                                <div style={{flex: 0.5, textAlign: 'center'}}>
+                                                    <div style={{fontSize: '20px', marginBottom: '8px'}}>5️⃣</div>
+                                                    <div style={{fontSize: '12px'}}>🔍 COMPARE</div>
+                                                    <div style={{fontSize: '11px', color: '#9ca3af', marginTop: '4px'}}>vs. forecast</div>
+                                                </div>
+                                                <div style={{fontSize: '20px', color: '#9ca3af'}}>↓</div>
+                                                <div style={{flex: 0.5, textAlign: 'center'}}>
+                                                    <div style={{fontSize: '20px', marginBottom: '8px'}}>6️⃣</div>
+                                                    <div style={{fontSize: '12px'}}>🧠 LEARN</div>
+                                                    <div style={{fontSize: '11px', color: '#9ca3af', marginTop: '4px'}}>Model update</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="explanation-box" style={{marginTop: '20px'}}>
+                                            <strong>System Intelligence Growth:</strong><br/>
+                                            SwasthyaSetu doesn't just predict the healthcare network—it learns from how the network responds.<br/><br/>
+                                            <strong>This Month's Learning:</strong>
+                                            <ul style={{marginTop: '8px', marginLeft: '16px', fontSize: '12px'}}>
+                                                <li>Forecast accuracy improved from 89% → 92%</li>
+                                                <li>Detected seasonal surge patterns 5 days earlier</li>
+                                                <li>Optimized redistribution routes (30% faster delivery)</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        
+        ReactDOM.createRoot(document.getElementById('root')).render(<Phase5WowFactor />);
+    </script>
+</body>
+</html>

@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwasthyaSetu AI Phase 3+ - Enhanced</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body, #root { height: 100%; width: 100%; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #fafbfc;
+            color: #1a202c;
+            line-height: 1.6;
+        }
+        
+        :root {
+            --primary: #0F4C75;
+            --primary-dark: #0a2f52;
+            --primary-light: #1a6fa0;
+            --success: #3ECF8E;
+            --success-light: #d1fae5;
+            --warning: #F7B32B;
+            --warning-light: #fef3c7;
+            --danger: #E63946;
+            --danger-light: #fee2e2;
+            --neutral-50: #f9fafb;
+            --neutral-100: #f3f4f6;
+            --neutral-200: #e5e7eb;
+            --neutral-400: #9ca3af;
+            --neutral-600: #4b5563;
+            --neutral-800: #1f2937;
+            --neutral-900: #111827;
+        }
+        
+        .text-xs { font-size: 12px; }
+        .text-sm { font-size: 13px; }
+        .text-base { font-size: 14px; }
+        .text-lg { font-size: 16px; }
+        .text-xl { font-size: 18px; }
+        .text-2xl { font-size: 22px; }
+        .text-3xl { font-size: 28px; }
+        .font-400 { font-weight: 400; }
+        .font-500 { font-weight: 500; }
+        .font-600 { font-weight: 600; }
+        
+        .px-4 { padding-left: 16px; padding-right: 16px; }
+        .py-4 { padding-top: 16px; padding-bottom: 16px; }
+        .py-6 { padding-top: 24px; padding-bottom: 24px; }
+        .mb-2 { margin-bottom: 8px; }
+        .mb-3 { margin-bottom: 12px; }
+        .mb-4 { margin-bottom: 16px; }
+        .mb-6 { margin-bottom: 24px; }
+        
+        .card {
+            background: white;
+            border: 1px solid var(--neutral-200);
+            border-radius: 10px;
+            padding: 16px;
+            transition: all 0.3s ease;
+        }
+        .card:hover { border-color: var(--primary); box-shadow: 0 4px 12px rgba(15, 76, 117, 0.1); }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .badge-success { background: var(--success-light); color: #065f46; }
+        .badge-warning { background: var(--warning-light); color: #92400e; }
+        .badge-danger { background: var(--danger-light); color: #991b1b; }
+        
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { background: #c72c35; }
+        .btn-secondary { background: var(--neutral-100); color: var(--primary); border: 1px solid var(--neutral-200); }
+        .btn-secondary:hover { background: var(--neutral-200); }
+        .btn-sm { padding: 8px 12px; font-size: 12px; }
+        
+        .input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--neutral-200);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(15, 76, 117, 0.1);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--neutral-200);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            transition: width 0.6s ease;
+        }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideInUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        @keyframes slideInLeft { from { transform: translateX(-20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes liveUpdate { 0% { background: #fff3cd; } 100% { background: white; } }
+        @keyframes countUp { from { opacity: 0; } to { opacity: 1; } }
+        
+        .fade-in { animation: fadeIn 0.3s ease; }
+        .slide-in-up { animation: slideInUp 0.4s ease; }
+        .pulse { animation: pulse 2s ease-in-out infinite; }
+        .slide-in-left { animation: slideInLeft 0.3s ease; }
+        .live-update { animation: liveUpdate 0.8s ease; }
+        
+        .app-container { display: flex; height: 100vh; }
+        .sidebar {
+            width: 200px;
+            background: #f8f9fa;
+            border-right: 1px solid var(--neutral-200);
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        .sidebar-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        .sidebar-item:hover, .sidebar-item.active {
+            background: white;
+            border-left-color: var(--primary);
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: white;
+            border-bottom: 1px solid var(--neutral-200);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .content {
+            flex: 1;
+            padding: 24px;
+        }
+        
+        .grid { display: grid; grid-gap: 16px; }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-4 { grid-template-columns: repeat(4, 1fr); }
+        
+        .stat-card {
+            background: white;
+            border: 1px solid var(--neutral-200);
+            border-radius: 10px;
+            padding: 16px;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--neutral-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+        .stat-change {
+            font-size: 12px;
+            color: var(--success);
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--neutral-200);
+            margin-bottom: 20px;
+            gap: 0;
+        }
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--neutral-600);
+        }
+        .tab:hover { color: var(--primary); }
+        .tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .alert-banner {
+            background: var(--warning-light);
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .alert-banner.critical {
+            background: var(--danger-light);
+            border-color: #fca5a5;
+        }
+        .alert-banner.emergency {
+            background: linear-gradient(135deg, var(--danger) 0%, #c72c35 100%);
+            border-color: var(--danger);
+            color: white;
+            animation: pulse 1s ease-in-out infinite;
+        }
+        .alert-icon { font-size: 18px; }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+        
+        .timeline-item {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary);
+        }
+        .timeline-item.active { border-left-color: var(--danger); background: var(--danger-light); }
+        .timeline-time {
+            min-width: 60px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .timeline-content {
+            flex: 1;
+        }
+        .timeline-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        .timeline-text {
+            font-size: 12px;
+            color: var(--neutral-600);
+        }
+        
+        .collaboration-card {
+            background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%);
+            border: 1px solid #bfdbfe;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+        
+        .governance-section {
+            background: white;
+            border: 1px solid var(--neutral-200);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .privacy-matrix {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            margin: 16px 0;
+        }
+        .privacy-matrix th {
+            background: var(--primary-light);
+            color: white;
+            padding: 8px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .privacy-matrix td {
+            padding: 8px;
+            border-bottom: 1px solid var(--neutral-200);
+        }
+        .privacy-matrix tr:nth-child(even) { background: var(--neutral-50); }
+        
+        .resource-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .resource-event {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid var(--warning);
+        }
+        .resource-event.completed { border-left-color: var(--success); }
+        .resource-event.active { 
+            border-left-color: var(--danger);
+            background: linear-gradient(135deg, rgba(230, 57, 70, 0.05) 0%, white 100%);
+            animation: liveUpdate 1s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .grid-3 { grid-template-columns: 1fr; }
+            .grid-4 { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        
+        // ============ LIVE DATA SIMULATION ============
+        
+        const useEmergencyLiveData = (emergencyType, timeElapsed) => {
+            const [data, setData] = useState({
+                affectedPhcs: [],
+                resourcesDispatched: [],
+                timeline: [],
+                metrics: {}
+            });
+            
+            useEffect(() => {
+                if (emergencyType === 'medicine_shortage') {
+                    setData({
+                        affectedPhcs: [
+                            { id: 1, name: 'PHC A - South', status: 'critical', stock: Math.max(0, 150 - timeElapsed * 20), consumption: 120 },
+                            { id: 2, name: 'PHC B - South', status: 'warning', stock: Math.max(0, 280 - timeElapsed * 15), consumption: 110 },
+                            { id: 3, name: 'PHC C - South', status: 'available', stock: Math.max(0, 400 - timeElapsed * 10), consumption: 100 }
+                        ],
+                        resourcesDispatched: [
+                            { id: 1, type: 'Supply Truck', quantity: '500 units', from: 'East District', to: 'South District', eta: Math.max(0, 45 - timeElapsed * 2), status: timeElapsed > 22 ? 'delivered' : 'in_transit' },
+                            { id: 2, type: 'Emergency Reserve', quantity: '300 units', from: 'Central Stockpile', to: 'South District', eta: Math.max(0, 60 - timeElapsed * 2.5), status: timeElapsed > 24 ? 'in_transit' : 'processing' }
+                        ],
+                        timeline: [
+                            { time: '14:32', title: 'Crisis Detected', desc: 'Amoxicillin stock critical in South District', active: true },
+                            { time: '14:35', title: 'Alert Issued', desc: 'All authorities notified, emergency protocol activated', active: timeElapsed > 3 },
+                            { time: '14:38', title: 'Supply Truck Dispatched', desc: '500 units from East District warehouse', active: timeElapsed > 6 },
+                            { time: '14:52', title: 'Supply Delivered', desc: 'Amoxicillin received at affected PHCs', active: timeElapsed > 20 },
+                            { time: '15:15', title: 'Crisis Resolved', desc: 'Stock replenished, all PHCs back to normal', active: timeElapsed > 43 }
+                        ],
+                        metrics: {
+                            phcsAffected: 3,
+                            unitsDispensed: Math.floor(timeElapsed * 30),
+                            patientsImpacted: Math.max(0, 145 - Math.floor(timeElapsed * 2)),
+                            responseTime: '4 mins'
+                        }
+                    });
+                }
+            }, [emergencyType, timeElapsed]);
+            
+            return data;
+        };
+        
+        // Advanced Forecast Data Generator
+        const generateAdvancedForecasts = () => {
+            const days = Array.from({length: 14}, (_, i) => i);
+            return {
+                medicines: {
+                    'Amoxicillin 250mg': {
+                        current: 1200,
+                        forecast: days.map(d => 1200 - (d * 120) + (Math.random() - 0.5) * 100),
+                        consumption: days.map(d => 120 + (Math.random() - 0.5) * 20),
+                        confidence: 92,
+                        trend: 'declining'
+                    },
+                    'Paracetamol 500mg': {
+                        current: 2100,
+                        forecast: days.map(d => 2100 - (d * 80) + (Math.random() - 0.5) * 80),
+                        consumption: days.map(d => 80 + (Math.random() - 0.5) * 15),
+                        confidence: 89,
+                        trend: 'stable'
+                    },
+                    'Metformin 500mg': {
+                        current: 950,
+                        forecast: days.map(d => 950 + (d * 10) + (Math.random() - 0.5) * 50),
+                        consumption: days.map(d => 85 + (Math.random() - 0.5) * 12),
+                        confidence: 87,
+                        trend: 'rising'
+                    }
+                },
+                beds: {
+                    forecast: days.map(d => 65 + d * 1.5 + (Math.random() - 0.5) * 8),
+                    confidence: 88
+                },
+                footfall: {
+                    forecast: days.map(d => 120 + d * 2 + (Math.random() - 0.5) * 15),
+                    confidence: 85
+                }
+            };
+        };
+        
+        // Main App
+        function SwasthyaSetu() {
+            const [currentView, setCurrentView] = useState('emergency-live');
+            const [emergencyType, setEmergencyType] = useState('medicine_shortage');
+            const [timeElapsed, setTimeElapsed] = useState(0);
+            const emergencyData = useEmergencyLiveData(emergencyType, timeElapsed);
+            const forecasts = generateAdvancedForecasts();
+            const chartsRef = useRef({});
+            
+            // Simulate time passage in emergency
+            useEffect(() => {
+                const interval = setInterval(() => {
+                    setTimeElapsed(prev => prev < 60 ? prev + 1 : 0);
+                }, 2000);
+                return () => clearInterval(interval);
+            }, []);
+            
+            // Chart rendering
+            useEffect(() => {
+                if (currentView === 'forecasts' && !chartsRef.current['forecast-chart']) {
+                    const ctx = document.getElementById('forecast-chart');
+                    if (ctx) {
+                        const days = Array.from({length: 14}, (_, i) => `Day ${i}`);
+                        chartsRef.current['forecast-chart'] = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: days,
+                                datasets: [
+                                    {
+                                        label: 'Amoxicillin (units)',
+                                        data: forecasts.medicines['Amoxicillin 250mg'].forecast,
+                                        borderColor: '#0F4C75',
+                                        backgroundColor: 'rgba(15, 76, 117, 0.05)',
+                                        borderWidth: 2,
+                                        tension: 0.4,
+                                        fill: true
+                                    },
+                                    {
+                                        label: 'Paracetamol (units)',
+                                        data: forecasts.medicines['Paracetamol 500mg'].forecast,
+                                        borderColor: '#3ECF8E',
+                                        backgroundColor: 'rgba(62, 207, 142, 0.05)',
+                                        borderWidth: 2,
+                                        tension: 0.4,
+                                        fill: true
+                                    },
+                                    {
+                                        label: 'Metformin (units)',
+                                        data: forecasts.medicines['Metformin 500mg'].forecast,
+                                        borderColor: '#F7B32B',
+                                        backgroundColor: 'rgba(247, 179, 43, 0.05)',
+                                        borderWidth: 2,
+                                        tension: 0.4,
+                                        fill: true
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { position: 'top' } },
+                                scales: { y: { beginAtZero: true } }
+                            }
+                        });
+                    }
+                }
+                
+                if (currentView === 'forecasts' && !chartsRef.current['multivariate-chart']) {
+                    const ctx = document.getElementById('multivariate-chart');
+                    if (ctx) {
+                        const days = Array.from({length: 14}, (_, i) => `Day ${i}`);
+                        chartsRef.current['multivariate-chart'] = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: days,
+                                datasets: [
+                                    {
+                                        label: 'Bed Occupancy %',
+                                        data: forecasts.beds.forecast,
+                                        backgroundColor: 'rgba(15, 76, 117, 0.7)',
+                                        yAxisID: 'y'
+                                    },
+                                    {
+                                        label: 'Patient Footfall',
+                                        data: forecasts.footfall.forecast,
+                                        backgroundColor: 'rgba(247, 179, 43, 0.7)',
+                                        yAxisID: 'y1'
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                interaction: { mode: 'index', intersect: false },
+                                scales: {
+                                    y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Bed Occupancy %' } },
+                                    y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'Footfall' }, grid: { drawOnChartArea: false } }
+                                }
+            }
+                        });
+                    }
+                }
+            }, [currentView]);
+            
+            return (
+                <div className="fade-in" style={{display: 'flex', height: '100vh', background: 'white'}}>
+                    {/* Sidebar */}
+                    <div className="sidebar">
+                        <div style={{padding: '16px', marginBottom: '24px', borderBottom: '1px solid var(--neutral-200)'}}>
+                            <h2 className="text-lg font-600" style={{color: 'var(--primary)'}}>SwasthyaSetu</h2>
+                            <p className="text-xs text-neutral-600">Phase 3+ Enhanced</p>
+                        </div>
+                        
+                        <div 
+                            className={`sidebar-item ${currentView === 'emergency-live' ? 'active' : ''}`}
+                            onClick={() => setCurrentView('emergency-live')}
+                        >
+                            🚨 Emergency Live
+                        </div>
+                        <div 
+                            className={`sidebar-item ${currentView === 'forecasts' ? 'active' : ''}`}
+                            onClick={() => setCurrentView('forecasts')}
+                        >
+                            📈 Multivariate Forecast
+                        </div>
+                        <div 
+                            className={`sidebar-item ${currentView === 'collaboration' ? 'active' : ''}`}
+                            onClick={() => setCurrentView('collaboration')}
+                        >
+                            🤝 Cross-District Flow
+                        </div>
+                        <div 
+                            className={`sidebar-item ${currentView === 'governance' ? 'active' : ''}`}
+                            onClick={() => setCurrentView('governance')}
+                        >
+                            🔐 Privacy & Governance
+                        </div>
+                    </div>
+                    
+                    {/* Main Content */}
+                    <div className="main-content">
+                        <div className="header" style={{background: currentView === 'emergency-live' ? 'linear-gradient(135deg, var(--danger) 0%, #c72c35 100%)' : 'white', color: currentView === 'emergency-live' ? 'white' : 'black'}}>
+                            <div>
+                                <h1 className="text-2xl font-600">
+                                    {currentView === 'emergency-live' && '🚨 Live Emergency Response'}
+                                    {currentView === 'forecasts' && '📊 Multivariate Demand Forecasting'}
+                                    {currentView === 'collaboration' && '🤝 Cross-District Collaboration'}
+                                    {currentView === 'governance' && '🔐 Privacy & Governance Framework'}
+                                </h1>
+                            </div>
+                            {currentView === 'emergency-live' && <div style={{fontSize: '28px', animation: 'pulse 1s ease-in-out infinite'}}>⏱️</div>}
+                        </div>
+                        
+                        <div className="content">
+                            {/* Emergency Live Data */}
+                            {currentView === 'emergency-live' && (
+                                <div className="fade-in">
+                                    <div style={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px'}}>
+                                        <div className="stat-card" style={{borderColor: 'var(--danger)', borderWidth: '2px'}}>
+                                            <div className="stat-label" style={{color: 'var(--danger)'}}>Elapsed Time</div>
+                                            <div className="stat-value" style={{color: 'var(--danger)'}}>
+                                                {Math.floor(timeElapsed / 60)}:{String(timeElapsed % 60).padStart(2, '0')}
+                                            </div>
+                                        </div>
+                                        <div className="stat-card" style={{borderColor: 'var(--danger)', borderWidth: '2px'}}>
+                                            <div className="stat-label" style={{color: 'var(--danger)'}}>PHCs Affected</div>
+                                            <div className="stat-value" style={{color: 'var(--danger)'}}>
+                                                {emergencyData.metrics.phcsAffected}
+                                            </div>
+                                        </div>
+                                        <div className="stat-card" style={{borderColor: 'var(--danger)', borderWidth: '2px'}}>
+                                            <div className="stat-label" style={{color: 'var(--danger)'}}>Units Dispensed</div>
+                                            <div className="stat-value" style={{color: 'var(--danger)'}}>
+                                                {emergencyData.metrics.unitsDispensed}
+                                            </div>
+                                        </div>
+                                        <div className="stat-card" style={{borderColor: 'var(--danger)', borderWidth: '2px'}}>
+                                            <div className="stat-label" style={{color: 'var(--danger)'}}>Patients Impacted</div>
+                                            <div className="stat-value" style={{color: 'var(--danger)'}}>
+                                                {emergencyData.metrics.patientsImpacted}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="grid grid-2 mb-6">
+                                        {/* Real-time Facility Status */}
+                                        <div>
+                                            <h2 className="text-lg font-600 mb-3">Facility Status - Real-Time</h2>
+                                            {emergencyData.affectedPhcs.map(phc => (
+                                                <div key={phc.id} className={`card mb-3 slide-in-left ${timeElapsed > 0 ? 'live-update' : ''}`} style={{borderLeft: '4px solid var(--danger)'}}>
+                                                    <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '8px'}}>
+                                                        <p className="font-600">{phc.name}</p>
+                                                        <span className={`badge badge-${phc.status}`}>
+                                                            {phc.status === 'critical' ? 'CRITICAL' : 'ALERT'}
+                                                        </span>
+                                                    </div>
+                                                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '12px'}}>
+                                                        <div>
+                                                            <p className="text-neutral-600">Stock</p>
+                                                            <p className="font-600" style={{color: phc.stock < 100 ? 'var(--danger)' : 'var(--warning)'}}>
+                                                                {phc.stock} units
+                                                            </p>
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-neutral-600">Consumption</p>
+                                                            <p className="font-600">{phc.consumption}/day</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="progress-bar" style={{marginTop: '8px'}}>
+                                                        <div className="progress-fill" style={{width: `${(phc.stock / 500) * 100}%`, background: phc.stock < 100 ? 'var(--danger)' : 'var(--warning)'}}></div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        
+                                        {/* Resource Mobilization */}
+                                        <div>
+                                            <h2 className="text-lg font-600 mb-3">Resource Mobilization - Live Tracking</h2>
+                                            {emergencyData.resourcesDispatched.map(resource => (
+                                                <div 
+                                                    key={resource.id} 
+                                                    className={`resource-event ${resource.status === 'delivered' ? 'completed' : resource.status === 'in_transit' ? 'active' : ''}`}
+                                                >
+                                                    <div>
+                                                        <p className="font-600 text-sm">{resource.type}</p>
+                                                        <p className="text-xs text-neutral-600">{resource.quantity}</p>
+                                                        <p className="text-xs text-neutral-600">{resource.from} → {resource.to}</p>
+                                                    </div>
+                                                    <div style={{marginLeft: 'auto', textAlign: 'right'}}>
+                                                        <p className="font-600" style={{color: resource.status === 'delivered' ? 'var(--success)' : 'var(--warning)'}}>
+                                                            {resource.status === 'delivered' ? '✓ Delivered' : `ETA: ${resource.eta}m`}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Timeline */}
+                                    <h2 className="text-lg font-600 mb-3">Emergency Timeline - Live Events</h2>
+                                    <div className="resource-timeline">
+                                        {emergencyData.timeline.map((event, idx) => (
+                                            <div key={idx} className={`timeline-item ${event.active ? 'active' : ''}`}>
+                                                <div className="timeline-time">{event.time}</div>
+                                                <div className="timeline-content">
+                                                    <div className="timeline-title">{event.title}</div>
+                                                    <div className="timeline-text">{event.desc}</div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                            
+                            {/* Multivariate Forecasting */}
+                            {currentView === 'forecasts' && (
+                                <div className="fade-in">
+                                    <h2 className="text-lg font-600 mb-3">Multi-Medicine Demand Forecast (14-day horizon)</h2>
+                                    <div className="card mb-6">
+                                        <div className="chart-container">
+                                            <canvas id="forecast-chart"></canvas>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="grid grid-3 mb-6">
+                                        {Object.entries(forecasts.medicines).map(([name, data]) => (
+                                            <div key={name} className="stat-card">
+                                                <p className="text-xs text-neutral-600 mb-2">{name}</p>
+                                                <p className="text-2xl font-600" style={{marginBottom: '8px'}}>
+                                                    {Math.min(...data.forecast).toFixed(0)}
+                                                </p>
+                                                <p className="text-xs mb-2" style={{color: data.trend === 'declining' ? 'var(--danger)' : data.trend === 'rising' ? 'var(--warning)' : 'var(--success)'}}>
+                                                    Trend: {data.trend}
+                                                </p>
+                                                <div className="progress-bar">
+                                                    <div className="progress-fill" style={{width: `${data.confidence}%`}}></div>
+                                                </div>
+                                                <p className="text-xs text-neutral-600 mt-2">Confidence: {data.confidence}%</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    
+                                    <h2 className="text-lg font-600 mb-3">Correlated Factors - Bed Occupancy & Footfall Forecast</h2>
+                                    <div className="card">
+                                        <div className="chart-container">
+                                            <canvas id="multivariate-chart"></canvas>
+                                        </div>
+                                        <p className="text-sm text-neutral-600 mt-4">
+                                            <strong>Insight:</strong> As predicted footfall increases, bed occupancy correlates positively. The forecast shows a 15-20% increase in both metrics over the next 7 days, suggesting need for additional bed capacity and medicine stock by day 10.
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+                            
+                            {/* Cross-District Collaboration */}
+                            {currentView === 'collaboration' && (
+                                <div className="fade-in">
+                                    <h2 className="text-lg font-600 mb-4">Active Cross-District Requests & Coordination</h2>
+                                    
+                                    <div className="collaboration-card">
+                                        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '12px'}}>
+                                            <div>
+                                                <h3 className="text-base font-600">South District → East District</h3>
+                                                <p className="text-sm text-neutral-600">Medicine Supply Request</p>
+                                            </div>
+                                            <span className="badge" style={{background: '#dbeafe', color: '#0c447c'}}>APPROVED</span>
+                                        </div>
+                                        <p className="text-sm mb-3">Request: 500 units Amoxicillin 250mg | Reason: Stock depletion (forecast critical in 2 days)</p>
+                                        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px'}}>
+                                            <div>
+                                                <p className="text-xs text-neutral-600 mb-1">From: East District</p>
+                                                <p className="font-500">Available: 1,200 units</p>
+                                                <p className="text-xs text-neutral-600">After transfer: 700 units (safe)</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-neutral-600 mb-1">To: South District</p>
+                                                <p className="font-500">Current: 150 units</p>
+                                                <p className="text-xs text-neutral-600">After transfer: 650 units (+4 days buffer)</p>
+                                            </div>
+                                        </div>
+                                        <div style={{display: 'flex', gap: '8px'}}>
+                                            <button className="btn btn-primary btn-sm">Execute Transfer</button>
+                                            <button className="btn btn-secondary btn-sm">Modify Request</button>
+                                            <button className="btn btn-secondary btn-sm">Messaging</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="collaboration-card">
+                                        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '12px'}}>
+                                            <div>
+                                                <h3 className="text-base font-600">West District → Central District</h3>
+                                                <p className="text-sm text-neutral-600">Bed Capacity Coordination</p>
+                                            </div>
+                                            <span className="badge" style={{background: '#fef3c7', color: '#92400e'}}>PENDING REVIEW</span>
+                                        </div>
+                                        <p className="text-sm mb-3">Request: Divert 5 non-critical patients | Reason: Surge anticipated in West (bed occupancy 92% → 105% forecast)</p>
+                                        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px'}}>
+                                            <div>
+                                                <p className="text-xs text-neutral-600 mb-1">West District Status</p>
+                                                <p className="font-500">Current Occupancy: 92%</p>
+                                                <p className="text-xs text-neutral-600">Forecast (3 days): 105% (CRITICAL)</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-neutral-600 mb-1">Central District Status</p>
+                                                <p className="font-500">Current Occupancy: 68%</p>
+                                                <p className="text-xs text-neutral-600">Available: 8 beds for diversion</p>
+                                            </div>
+                                        </div>
+                                        <div style={{display: 'flex', gap: '8px'}}>
+                                            <button className="btn btn-primary btn-sm">Approve & Activate</button>
+                                            <button className="btn btn-secondary btn-sm">Request Details</button>
+                                            <button className="btn btn-secondary btn-sm">Counter-Offer</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <h2 className="text-lg font-600 mb-3 mt-6">Collaboration History & SLAs</h2>
+                                    <div className="card">
+                                        <table className="privacy-matrix">
+                                            <thead>
+                                                <tr>
+                                                    <th>Request Type</th>
+                                                    <th>Source → Dest</th>
+                                                    <th>Status</th>
+                                                    <th>SLA Target</th>
+                                                    <th>Actual</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Medicine Transfer</td>
+                                                    <td>East → South</td>
+                                                    <td style={{color: 'var(--success)'}}>✓ Completed</td>
+                                                    <td>48 hours</td>
+                                                    <td>32 hours</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Bed Diversion</td>
+                                                    <td>North → Central</td>
+                                                    <td style={{color: 'var(--success)'}}>✓ Completed</td>
+                                                    <td>24 hours</td>
+                                                    <td>18 hours</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Staff Rotation</td>
+                                                    <td>Central → West</td>
+                                                    <td style={{color: 'var(--warning)'}}>⏳ In Progress</td>
+                                                    <td>72 hours</td>
+                                                    <td>36 hours</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            )}
+                            
+                            {/* Privacy & Governance */}
+                            {currentView === 'governance' && (
+                                <div className="fade-in">
+                                    <div className="governance-section">
+                                        <h2 className="text-lg font-600 mb-3">Data Classification Framework</h2>
+                                        <table className="privacy-matrix">
+                                            <thead>
+                                                <tr>
+                                                    <th>Classification</th>
+                                                    <th>Examples</th>
+                                                    <th>Storage</th>
+                                                    <th>Access Control</th>
+                                                    <th>Retention</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td><strong>PUBLIC</strong></td>
+                                                    <td>Aggregate statistics, facility locations</td>
+                                                    <td>All locations</td>
+                                                    <td>Unrestricted</td>
+                                                    <td>Indefinite</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>INTERNAL</strong></td>
+                                                    <td>PHC capacities, staffing levels, forecasts</td>
+                                                    <td>State boundary</td>
+                                                    <td>Health staff only</td>
+                                                    <td>3 years</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>SENSITIVE</strong></td>
+                                                    <td>Patient counts, outbreak signals</td>
+                                                    <td>Local PHC</td>
+                                                    <td>District authority + encrypted</td>
+                                                    <td>1 year</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                    <div className="governance-section">
+                                        <h2 className="text-lg font-600 mb-3">Privacy by Design Principles</h2>
+                                        <div style={{display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px'}}>
+                                            <div className="card" style={{background: 'linear-gradient(135deg, #f0fdf4 0%, #dbeafe 100%)', border: '1px solid #86efac'}}>
+                                                <p className="font-600 mb-2">🔐 Data Minimization</p>
+                                                <p className="text-sm text-neutral-600">Collect only essential data. No patient names, IDs, or medical histories stored centrally.</p>
+                                            </div>
+                                            <div className="card" style={{background: 'linear-gradient(135deg, #fef2f2 0%, #fce7f3 100%)', border: '1px solid #fca5a5'}}>
+                                                <p className="font-600 mb-2">🏘️ Data Residency</p>
+                                                <p className="text-sm text-neutral-600">Healthcare data stays within state boundaries. National model learns without centralizing data.</p>
+                                            </div>
+                                            <div className="card" style={{background: 'linear-gradient(135deg, #fef9e7 0%, #fef3c7 100%)', border: '1px solid #fcd34d'}}>
+                                                <p className="font-600 mb-2">🔑 Encryption by Default</p>
+                                                <p className="text-sm text-neutral-600">All data in transit (TLS 1.3) and at rest (AES-256). Keys managed per state.</p>
+                                            </div>
+                                            <div className="card" style={{background: 'linear-gradient(135deg, #f0fdf4 0%, #bbf7d0 100%)', border: '1px solid #6ee7b7'}}>
+                                                <p className="font-600 mb-2">📋 Access Control</p>
+                                                <p className="text-sm text-neutral-600">Role-based access (RBAC). Audit logging of all data access. Principle of least privilege.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="governance-section">
+                                        <h2 className="text-lg font-600 mb-3">Compliance & Certifications</h2>
+                                        <div style={{display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px'}}>
+                                            <div className="card" style={{textAlign: 'center', borderTop: '3px solid var(--success)'}}>
+                                                <p style={{fontSize: '24px', marginBottom: '8px'}}>✓</p>
+                                                <p className="font-600 text-sm">ISO 27001</p>
+                                                <p className="text-xs text-neutral-600">Information Security Management</p>
+                                            </div>
+                                            <div className="card" style={{textAlign: 'center', borderTop: '3px solid var(--primary)'}}>
+                                                <p style={{fontSize: '24px', marginBottom: '8px'}}>✓</p>
+                                                <p className="font-600 text-sm">HIPAA Equivalent</p>
+                                                <p className="text-xs text-neutral-600">Health Data Protection (India adapted)</p>
+                                            </div>
+                                            <div className="card" style={{textAlign: 'center', borderTop: '3px solid var(--warning)'}}>
+                                                <p style={{fontSize: '24px', marginBottom: '8px'}}>✓</p>
+                                                <p className="font-600 text-sm">DPA Compliant</p>
+                                                <p className="text-xs text-neutral-600">Data Protection Act of India</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="governance-section">
+                                        <h2 className="text-lg font-600 mb-3">Audit Logging & Accountability</h2>
+                                        <p className="text-sm text-neutral-600 mb-3">Every action is logged and traceable. Immutable audit trail maintained for regulatory compliance.</p>
+                                        <table className="privacy-matrix">
+                                            <thead>
+                                                <tr>
+                                                    <th>Event Type</th>
+                                                    <th>Data Logged</th>
+                                                    <th>Retention</th>
+                                                    <th>Access</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Data Access</td>
+                                                    <td>User ID, timestamp, data accessed, purpose</td>
+                                                    <td>2 years</td>
+                                                    <td>Security team, auditors</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Configuration Changes</td>
+                                                    <td>Change ID, who, what, when, approval</td>
+                                                    <td>3 years</td>
+                                                    <td>Admin team, compliance</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Security Events</td>
+                                                    <td>Alert type, severity, source, action taken</td>
+                                                    <td>1 year</td>
+                                                    <td>Security operations center</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                    <div className="governance-section">
+                                        <h2 className="text-lg font-600 mb-3">Governance Structure & Decision Making</h2>
+                                        <div className="card" style={{background: 'var(--neutral-50)'}}>
+                                            <p className="font-600 mb-3">📊 Data Governance Committee</p>
+                                            <p className="text-sm mb-3">
+                                                <strong>Members:</strong> National Health Director, State Health Secretaries, Data Protection Officer, Legal Counsel, Technical Architect
+                                            </p>
+                                            <p className="text-sm mb-3">
+                                                <strong>Responsibilities:</strong> Approves data sharing agreements, reviews privacy incidents, sets data retention policies, oversees audit compliance
+                                            </p>
+                                            <p className="text-sm">
+                                                <strong>Meeting Frequency:</strong> Quarterly review, emergency meetings for security incidents
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        
+        ReactDOM.createRoot(document.getElementById('root')).render(<SwasthyaSetu />);
+    </script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+# SwasthyaSetu Complete Stack - Docker Compose Configuration
+# Includes Backend API + Database + Optional Services
+
+version: '3.9'
+
+services:
+  # ============================================================================
+  # PostgreSQL Database (Production-Ready)
+  # ============================================================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: swasthyasetu-db
+    environment:
+      POSTGRES_USER: ${DB_USER:-swasthyasetu}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-SecurePassword@2024}
+      POSTGRES_DB: ${DB_NAME:-swasthyasetu}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=en_US.UTF-8"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-swasthyasetu}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - swasthyasetu-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ============================================================================
+  # Redis Cache (Optional - for session/caching)
+  # ============================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: swasthyasetu-cache
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - swasthyasetu-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ============================================================================
+  # SwasthyaSetu Backend API
+  # ============================================================================
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: swasthyasetu-api
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 5000
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production-2024}
+      
+      # Database (PostgreSQL)
+      DATABASE_URL: postgresql://${DB_USER:-swasthyasetu}:${DB_PASSWORD:-SecurePassword@2024}@postgres:5432/${DB_NAME:-swasthyasetu}
+      DATABASE_TYPE: postgresql
+      DATABASE_SSL: ${DATABASE_SSL:-false}
+      
+      # Redis Cache
+      REDIS_URL: redis://redis:6379
+      
+      # CORS
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000,http://localhost:8080,http://localhost:5000}
+      
+      # Logging
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      
+      # Features
+      ENABLE_FEDERATED_LEARNING: ${ENABLE_FEDERATED_LEARNING:-true}
+      ENABLE_ANOMALY_DETECTION: ${ENABLE_ANOMALY_DETECTION:-true}
+      ENABLE_SCENARIO_SIMULATION: ${ENABLE_SCENARIO_SIMULATION:-true}
+      ENABLE_AUDIT_LOGGING: ${ENABLE_AUDIT_LOGGING:-true}
+      
+      # Google Cloud (if using Vertex AI)
+      GOOGLE_CLOUD_PROJECT_ID: ${GOOGLE_CLOUD_PROJECT_ID:-}
+      
+    ports:
+      - "5000:5000"
+    
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    
+    volumes:
+      - ./logs:/app/logs
+      - ./data:/app/data
+    
+    networks:
+      - swasthyasetu-network
+    
+    restart: unless-stopped
+    
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    # Increase open file limit for production
+    ulimits:
+      nofile: 65536
+
+  # ============================================================================
+  # pgAdmin (Optional - for database management)
+  # ============================================================================
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: swasthyasetu-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@swasthyasetu.local}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - swasthyasetu-network
+    restart: unless-stopped
+    profiles:
+      - dev
+
+  # ============================================================================
+  # Nginx Reverse Proxy (Production-Ready)
+  # ============================================================================
+  nginx:
+    image: nginx:alpine
+    container_name: swasthyasetu-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certs:/etc/nginx/certs:ro
+      - nginx_cache:/var/cache/nginx
+    depends_on:
+      - backend
+    networks:
+      - swasthyasetu-network
+    restart: unless-stopped
+    profiles:
+      - prod
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# ============================================================================
+# Docker Networks
+# ============================================================================
+networks:
+  swasthyasetu-network:
+    driver: bridge
+
+# ============================================================================
+# Docker Volumes
+# ============================================================================
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+  nginx_cache:
+    driver: local
+
+# ============================================================================
+# Environment Configuration
+# ============================================================================
+# Usage:
+#   Development (SQLite):
+#     docker-compose up backend
+#   
+#   Production (PostgreSQL + Redis):
+#     docker-compose -f docker-compose.yml -p swasthyasetu up -d
+#   
+#   With pgAdmin for DB management:
+#     docker-compose --profile dev up -d
+#   
+#   Production with Nginx reverse proxy:
+#     docker-compose --profile prod up -d
+#
+# Configuration:
+#   1. Copy .env.example to .env
+#   2. Update values in .env
+#   3. Run: docker-compose up -d

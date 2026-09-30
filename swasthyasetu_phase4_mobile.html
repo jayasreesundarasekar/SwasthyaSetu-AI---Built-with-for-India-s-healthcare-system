@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>SwasthyaSetu Mobile App - Phase 4</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body, #root { height: 100%; width: 100%; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #fafbfc;
+            line-height: 1.6;
+            overflow: hidden;
+        }
+        
+        :root {
+            --primary: #0F4C75;
+            --primary-dark: #0a2f52;
+            --success: #3ECF8E;
+            --warning: #F7B32B;
+            --danger: #E63946;
+            --neutral-50: #f9fafb;
+            --neutral-100: #f3f4f6;
+            --neutral-200: #e5e7eb;
+            --neutral-600: #4b5563;
+            --neutral-800: #1f2937;
+            --neutral-900: #111827;
+        }
+        
+        .mobile-frame {
+            width: 375px;
+            height: 812px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 40px;
+            border: 8px solid #000;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .status-bar {
+            height: 44px;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .app-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: var(--primary);
+            color: white;
+            padding: 16px;
+            padding-top: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .language-menu {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .user-role {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+        
+        .role-selector {
+            display: flex;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px;
+            border-radius: 6px;
+        }
+        
+        .role-btn {
+            padding: 4px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: transparent;
+            color: white;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .role-btn.active {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: white;
+        }
+        
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: 60px;
+            left: 16px;
+            right: 16px;
+            background: var(--warning);
+            color: white;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            z-index: 10;
+            animation: slideInDown 0.3s ease;
+        }
+        
+        @keyframes slideInDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes slideInUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        
+        .notification-badge.danger { background: var(--danger); }
+        .notification-badge.dismiss {
+            font-size: 14px;
+            cursor: pointer;
+            margin-left: auto;
+        }
+        
+        .card {
+            background: white;
+            border: 1px solid var(--neutral-200);
+            border-radius: 12px;
+            padding: 12px;
+            animation: slideInUp 0.3s ease;
+        }
+        
+        .card-header {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        
+        .badge-warning { background: rgba(247, 179, 43, 0.2); color: #92400e; }
+        .badge-danger { background: rgba(230, 57, 70, 0.2); color: #991b1b; }
+        .badge-success { background: rgba(62, 207, 142, 0.2); color: #065f46; }
+        .badge-info { background: rgba(15, 76, 117, 0.2); color: #0c2d48; }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label { color: var(--neutral-600); }
+        .stat-value { font-weight: 600; color: var(--neutral-900); }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--neutral-200);
+            border-radius: 3px;
+            margin: 8px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #1a6fa0);
+            transition: width 0.6s ease;
+        }
+        
+        .workflow-step {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            padding: 8px;
+            background: var(--neutral-50);
+            border-radius: 6px;
+            border-left: 3px solid var(--neutral-200);
+            font-size: 12px;
+        }
+        
+        .workflow-step.active { border-left-color: var(--warning); background: rgba(247, 179, 43, 0.05); }
+        .workflow-step.completed { border-left-color: var(--success); background: rgba(62, 207, 142, 0.05); }
+        
+        .workflow-icon {
+            min-width: 20px;
+            text-align: center;
+        }
+        
+        .workflow-content {
+            flex: 1;
+        }
+        
+        .workflow-title {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        
+        .workflow-time {
+            font-size: 11px;
+            color: var(--neutral-600);
+        }
+        
+        .btn {
+            padding: 10px 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+        
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:active { background: var(--primary-dark); }
+        .btn-secondary { background: var(--neutral-100); color: var(--primary); border: 1px solid var(--neutral-200); }
+        .btn-secondary:active { background: var(--neutral-200); }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: white;
+            border-top: 1px solid var(--neutral-200);
+            height: 60px;
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+            margin-top: auto;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            padding: 8px;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--neutral-600);
+            transition: all 0.2s;
+        }
+        
+        .nav-item.active {
+            color: var(--primary);
+        }
+        
+        .nav-badge {
+            position: absolute;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            top: -8px;
+            right: -8px;
+        }
+        
+        .export-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: flex-end;
+            z-index: 100;
+            animation: slideInUp 0.3s ease;
+        }
+        
+        .export-sheet {
+            background: white;
+            border-radius: 16px 16px 0 0;
+            padding: 16px;
+            width: 100%;
+            max-height: 50%;
+            overflow-y: auto;
+        }
+        
+        .export-option {
+            padding: 12px;
+            margin-bottom: 8px;
+            border: 1px solid var(--neutral-200);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .export-option:active { background: var(--neutral-100); }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            width: 90%;
+            max-height: 70%;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-frame {
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+                border: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        
+        // ============ TRANSLATIONS ============
+        const translations = {
+            en: {
+                app_title: 'SwasthyaSetu',
+                home: 'Home',
+                medicines: 'Medicines',
+                workflows: 'Workflows',
+                reports: 'Reports',
+                settings: 'Settings',
+                phc_staff: 'PHC Staff',
+                district_admin: 'District Admin',
+                state_director: 'State Director',
+                notifications: 'notifications',
+                stock_critical: 'Stock Critical',
+                amoxicillin_low: 'Amoxicillin stock critically low. Approval chain activated.',
+                dismiss: '✕',
+                pending_approvals: 'Pending Approvals',
+                approval_needed: 'Approval Needed',
+                medicine_request: 'Medicine Transfer Request',
+                from: 'From',
+                to: 'To',
+                quantity: 'Quantity',
+                status: 'Status',
+                created: 'Created',
+                approve: 'Approve',
+                review: 'Review',
+                bed_occupancy: 'Bed Occupancy',
+                medicine_stock: 'Medicine Stock',
+                patients_today: 'Patients Today',
+                available: 'Available',
+                total_medicines: 'Total Medicines',
+                low_stock_items: 'Low Stock Items',
+                view_all: 'View All',
+                quick_actions: 'Quick Actions',
+                check_stock: 'Check Stock',
+                request_transfer: 'Request Transfer',
+                view_forecast: 'View Forecast',
+                export_data: 'Export Data',
+                export_as_pdf: 'Export as PDF',
+                export_as_csv: 'Export as CSV',
+                send_to_email: 'Send to Email',
+                workflow_timeline: 'Workflow Timeline',
+                requested: 'Requested',
+                awaiting_approval: 'Awaiting Approval',
+                approved: 'Approved',
+                in_transit: 'In Transit',
+                delivered: 'Delivered',
+                dashboard_settings: 'Dashboard Settings',
+                customize_widgets: 'Customize Widgets',
+                enable_notifications: 'Enable Notifications',
+                language: 'Language',
+                english: 'English',
+                hindi: 'हिंदी',
+                tamil: 'தமிழ்',
+                telugu: 'తెలుగు',
+                kannada: 'ಕನ್ನಡ'
+            },
+            hi: {
+                app_title: 'स्वास्थ्यसेतु',
+                home: 'होम',
+                medicines: 'दवाएं',
+                workflows: 'वर्कफ़्लो',
+                reports: 'रिपोर्ट',
+                settings: 'सेटिंग्स',
+                phc_staff: 'PHC कर्मचारी',
+                district_admin: 'जिला प्रशासक',
+                state_director: 'राज्य निदेशक',
+                notifications: 'सूचनाएं',
+                stock_critical: 'स्टॉक गंभीर',
+                amoxicillin_low: 'अमोक्सिसिलिन स्टॉक बेहद कम है। अनुमोदन चेन सक्रिय।',
+                dismiss: '✕',
+                pending_approvals: 'लंबित अनुमोदन',
+                approval_needed: 'अनुमोदन आवश्यक',
+                medicine_request: 'दवा स्थानांतरण अनुरोध',
+                from: 'से',
+                to: 'को',
+                quantity: 'मात्रा',
+                status: 'स्थिति',
+                created: 'बनाया गया',
+                approve: 'मंजूरी दें',
+                review: 'समीक्षा करें',
+                bed_occupancy: 'बिस्तर पर कब्जा',
+                medicine_stock: 'दवा स्टॉक',
+                patients_today: 'आज रोगी',
+                available: 'उपलब्ध',
+                total_medicines: 'कुल दवाएं',
+                low_stock_items: 'कम स्टॉक आइटम',
+                view_all: 'सभी देखें',
+                quick_actions: 'त्वरित कार्य',
+                check_stock: 'स्टॉक जांचें',
+                request_transfer: 'स्थानांतरण अनुरोध करें',
+                view_forecast: 'पूर्वानुमान देखें',
+                export_data: 'डेटा निर्यात करें',
+                export_as_pdf: 'PDF के रूप में निर्यात करें',
+                export_as_csv: 'CSV के रूप में निर्यात करें',
+                send_to_email: 'ईमेल पर भेजें',
+                workflow_timeline: 'वर्कफ़्लो टाइमलाइन',
+                requested: 'अनुरोधित',
+                awaiting_approval: 'अनुमोदन की प्रतीक्षा',
+                approved: 'मंजूर',
+                in_transit: 'पारगमन में',
+                delivered: 'डिलीवर किया गया',
+                dashboard_settings: 'डैशबोर्ड सेटिंग्स',
+                customize_widgets: 'विजेट अनुकूलित करें',
+                enable_notifications: 'सूचनाएं सक्षम करें',
+                language: 'भाषा',
+                english: 'English',
+                hindi: 'हिंदी',
+                tamil: 'தமிழ்',
+                telugu: 'తెలుగు',
+                kannada: 'ಕನ್ನಡ'
+            },
+            ta: {
+                app_title: 'ஸ்வாஸ்தியசேது',
+                home: 'முகப்பு',
+                medicines: 'மருந்துகள்',
+                workflows: 'பணிப்பாய்வுகள்',
+                reports: 'அறிக்கைகள்',
+                settings: 'அமைப்புகள்',
+                phc_staff: 'PHC பணியாளர்',
+                district_admin: 'மாவட்ட நிர்வாகி',
+                state_director: 'மாநில இயக்குனர்',
+                notifications: 'அறிவிப்புகள்',
+                stock_critical: 'பங்கு விமர்சனம்',
+                amoxicillin_low: 'அமோக்சிசிலின் பங்கு மிகவும் குறைவு. அங்கீகாரச் சங்கிலி செயல்படுத்தப்பட்டுள்ளது.',
+                dismiss: '✕',
+                pending_approvals: 'நிலுவையில் உள்ள அங்கீகாரங்கள்',
+                approval_needed: 'அங்கீகாரம் தேவை',
+                medicine_request: 'மருந்து மாற்றல் கோரிக்கை',
+                from: 'இருந்து',
+                to: 'க்கு',
+                quantity: 'அளவு',
+                status: 'நிலை',
+                created: 'உருவாக்கப்பட்ட',
+                approve: 'ஆமோதிக்க',
+                review: 'மறுஆய்வு',
+                bed_occupancy: 'படுக்கை ஆக்கிரமிப்பு',
+                medicine_stock: 'மருந்து பங்கு',
+                patients_today: 'இன்றைய நோயாளிகள்',
+                available: 'கிடைக்கும்',
+                total_medicines: 'மொத்த மருந்துகள்',
+                low_stock_items: 'குறைந்த பங்கு பொருட்கள்',
+                view_all: 'அனைத்தையும் பார்க்க',
+                quick_actions: 'விரைந்த நடவடிக்கைகள்',
+                check_stock: 'பங்கு சரிபார்க்க',
+                request_transfer: 'மாற்றல் கோரிக்கை',
+                view_forecast: 'கணிப்பு பார்க்க',
+                export_data: 'தரவு ஏற்றுமதி',
+                export_as_pdf: 'PDF ஆக ஏற்றுமதி செய்க',
+                export_as_csv: 'CSV ஆக ஏற்றுமதி செய்க',
+                send_to_email: 'மின்னஞ்சலுக்கு அனுப்பவும்',
+                workflow_timeline: 'பணிப்பாய்வு காலக்கட்டம்',
+                requested: 'கோரப்பட்ட',
+                awaiting_approval: 'அங்கீகாரம் பெறுவதற்கான காத்திருப்பு',
+                approved: 'ஆமோதிக்கப்பட்ட',
+                in_transit: 'பயணத்தில்',
+                delivered: 'வழங்கப்பட்டுள்ளது',
+                dashboard_settings: 'டேஷ்போர்ட் அமைப்புகள்',
+                customize_widgets: 'விட்জெட்களை தனிப்பயனாக்க',
+                enable_notifications: 'அறிவிப்புகளை செயல்படுத்த',
+                language: 'மொழி',
+                english: 'English',
+                hindi: 'हिंदी',
+                tamil: 'தமிழ்',
+                telugu: 'తెలుగు',
+                kannada: 'ಕನ್ನಡ'
+            },
+            te: {
+                app_title: 'ఆరోగ్యసేతు',
+                home: 'హోమ్',
+                medicines: 'ఔషధాలు',
+                workflows: 'వర్కఫ్లోలు',
+                reports: 'నివేదికలు',
+                settings: 'సెట్టింగ్‌లు',
+                phc_staff: 'PHC సిబ్బంది',
+                district_admin: 'జిల్లా అధికారి',
+                state_director: 'రాష్ట్ర నిర్దేశకుడు',
+                notifications: 'నోటిఫికేషన్‌లు',
+                stock_critical: 'స్టాక్ క్రిటికల్',
+                amoxicillin_low: 'అమోక్సిసిలిన్ స్టాక్ చాలా తక్కువ. ఆమోదన చైన్ సక్రియం చేయబడింది.',
+                dismiss: '✕',
+                pending_approvals: 'పెండింగ్ ఆమోదనలు',
+                approval_needed: 'ఆమోదన అవసరం',
+                medicine_request: 'ఔషధ బదిలీ అభ్యర్థన',
+                from: 'నుండి',
+                to: 'కు',
+                quantity: 'పరిమాణం',
+                status: 'స్థితి',
+                created: 'సృష్టించిన',
+                approve: 'ఆమోదించండి',
+                review: 'సమీక్ష',
+                bed_occupancy: 'పడక ఆక్యుపెన్సీ',
+                medicine_stock: 'ఔషధ స్టాక్',
+                patients_today: 'ఈ రోజు రోగులు',
+                available: 'అందుబాటులో',
+                total_medicines: 'మొత్తం ఔషధాలు',
+                low_stock_items: 'తక్కువ స్టాక్ వస్తువులు',
+                view_all: 'అన్నీ చూడండి',
+                quick_actions: 'త్వరిత చర్యలు',
+                check_stock: 'స్టాక్ చెక్ చేయండి',
+                request_transfer: 'బదిలీ అభ్యర్థన',
+                view_forecast: 'సూచన చూడండి',
+                export_data: 'డేటా ఎగుమతి',
+                export_as_pdf: 'PDF గా ఎగుమతి చేయండి',
+                export_as_csv: 'CSV గా ఎగుమతి చేయండి',
+                send_to_email: 'ఇమెయిల్ కు పంపండి',
+                workflow_timeline: 'వర్కఫ్లో టైమ్‌లైన్',
+                requested: 'అభ్యర్థించినది',
+                awaiting_approval: 'ఆమోదన కోసం ఎదురుచూస్తోంది',
+                approved: 'ఆమోదించబడింది',
+                in_transit: 'ట్రాన్జిట్‌లో',
+                delivered: 'డెలివర్ చేయబడింది',
+                dashboard_settings: 'డాష్‌బోర్డ్ సెట్టింగ్‌లు',
+                customize_widgets: 'విజెట్‌లను కస్టమైజ్ చేయండి',
+                enable_notifications: 'నోటిఫికేషన్‌లను ప్రారంభించండి',
+                language: 'భాష',
+                english: 'English',
+                hindi: 'हिंदी',
+                tamil: 'தமிழ்',
+                telugu: 'తెలుగు',
+                kannada: 'ಕನ್ನಡ'
+            },
+            kn: {
+                app_title: 'ಸ್ವಾಸ್ಥ್ಯಸೇತು',
+                home: 'ಮುಖ್ಯ ಪುಟ',
+                medicines: 'ಔಷಧಗಳು',
+                workflows: 'ವರ್ಕ್‌ಫ್ಲೋ',
+                reports: 'ವರದಿಗಳು',
+                settings: 'ಸೆಟ್ಟಿಂಗ್‌ಗಳು',
+                phc_staff: 'PHC ಸಿಬ್ಬಂದಿ',
+                district_admin: 'ಜಿಲ್ಲೆ ಆಡಳಿತಗಾರ',
+                state_director: 'ರಾಜ್ಯ ನಿರ್ದೇಶಕ',
+                notifications: 'ಅಧಿಸೂಚನೆಗಳು',
+                stock_critical: 'ಸ್ಟಾಕ್ ಅತ್ಯಂತ ಗಂಭೀರ',
+                amoxicillin_low: 'ಅಮೋಕ್ಸಿಸಿಲಿನ್ ಸ್ಟಾಕ್ ಬಹಳ ಕಡಿಮೆ. ಅನುಮೋದನ ಸರಪಳಿ ಸಕ್ರಿಯಗೊಳಿಸಲಾಗಿದೆ.',
+                dismiss: '✕',
+                pending_approvals: 'ಬಾಕಿ ಅನುಮೋದನೆ',
+                approval_needed: 'ಅನುಮೋದನೆ ಅಗತ್ಯ',
+                medicine_request: 'ಔಷಧ ವರ್ಗಾವಣೆ ವಿನಂತಿ',
+                from: 'ಇಂದ',
+                to: 'ಗೆ',
+                quantity: 'ಪ್ರಮಾಣ',
+                status: 'ಸ್ಥಿತಿ',
+                created: 'ರಚಿಸಿದ',
+                approve: 'ಅನುಮೋದಿಸಿ',
+                review: 'ಅವಲೋಕನ',
+                bed_occupancy: 'ಹಾಸಿರ ಆಕ್ರಮಣೆ',
+                medicine_stock: 'ಔಷಧ ಸ್ಟಾಕ್',
+                patients_today: 'ಇಂದಿನ ರೋಗಿಗಳು',
+                available: 'ಲಭ್ಯವಿದೆ',
+                total_medicines: 'ಒಟ್ಟು ಔಷಧಗಳು',
+                low_stock_items: 'ಕಡಿಮೆ ಸ್ಟಾಕ್ ವಸ್ತುಗಳು',
+                view_all: 'ಎಲ್ಲವನ್ನೂ ವೀಕ್ಷಿಸಿ',
+                quick_actions: 'ತ್ವರಿತ ಕ್ರಮಗಳು',
+                check_stock: 'ಸ್ಟಾಕ್ ಪರಿಶೀಲಿಸಿ',
+                request_transfer: 'ವರ್ಗಾವಣೆ ವಿನಂತಿ',
+                view_forecast: 'ಮುನ್ನಡೆ ನೋಡಿ',
+                export_data: 'ಡೇಟಾ ರಫ್ತು ಮಾಡಿ',
+                export_as_pdf: 'PDF ಆಗಿ ರಫ್ತು ಮಾಡಿ',
+                export_as_csv: 'CSV ಆಗಿ ರಫ್ತು ಮಾಡಿ',
+                send_to_email: 'ಇಮೇಲ್‌ಗೆ ಕಳುಹಿಸಿ',
+                workflow_timeline: 'ವರ್ಕ್‌ಫ್ಲೋ ಟೈಮ್‌ಲೈನ್',
+                requested: 'ವಿನಂತಿಸಿದ',
+                awaiting_approval: 'ಅನುಮೋದನೆಗಾಗಿ ಎದುರುನೋಡುತ್ತಿದೆ',
+                approved: 'ಅನುಮೋದಿತ',
+                in_transit: 'ಸಾಗಣೆ ಸಮಯದಲ್ಲಿ',
+                delivered: 'ಸರಬರಾಜು ಮಾಡಲಾಗಿದೆ',
+                dashboard_settings: 'ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ಸೆಟ್ಟಿಂಗ್‌ಗಳು',
+                customize_widgets: 'ವಿಜೆಟ್‌ಗಳನ್ನು ಕಸ್ಟಮೈಜ್ ಮಾಡಿ',
+                enable_notifications: 'ಅಧಿಸೂಚನೆಗಳನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ',
+                language: 'ಭಾಷೆ',
+                english: 'English',
+                hindi: 'हिंदी',
+                tamil: 'தமிழ்',
+                telugu: 'తెలుగు',
+                kannada: 'ಕನ್ನಡ'
+            }
+        };
+        
+        function MobileApp() {
+            const [language, setLanguage] = useState('en');
+            const [currentView, setCurrentView] = useState('home');
+            const [userRole, setUserRole] = useState('phc_staff');
+            const [showNotification, setShowNotification] = useState(true);
+            const [showExportModal, setShowExportModal] = useState(false);
+            const [showSettingsModal, setShowSettingsModal] = useState(false);
+            
+            const t = translations[language];
+            
+            const stats = {
+                phc_staff: {
+                    bed_occupancy: '68%',
+                    medicine_stock: '94%',
+                    patients_today: '142',
+                    low_stock: 3
+                },
+                district_admin: {
+                    total_phcs: '18',
+                    avg_occupancy: '72%',
+                    stock_status: 'Good',
+                    critical_alerts: 2
+                },
+                state_director: {
+                    total_phcs: '426',
+                    total_patients: '12,340',
+                    supply_efficiency: '89%',
+                    budget_utilization: '76%'
+                }
+            };
+            
+            const workflows = [
+                { id: 1, step: 'Requested', status: 'completed', time: '09:30', icon: '📝' },
+                { id: 2, step: 'Awaiting Approval', status: 'active', time: 'Now', icon: '⏳' },
+                { id: 3, step: 'Approved', status: 'pending', time: '--', icon: '✓' },
+                { id: 4, step: 'In Transit', status: 'pending', time: '--', icon: '🚚' },
+                { id: 5, step: 'Delivered', status: 'pending', time: '--', icon: '📦' }
+            ];
+            
+            return (
+                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: '#f0f0f0', padding: '20px'}}>
+                    <div className="mobile-frame">
+                        <div className="status-bar">
+                            <span>9:41</span>
+                            <span style={{fontSize: '14px'}}>●●●●●</span>
+                        </div>
+                        
+                        <div className="app-container">
+                            <div className="header">
+                                <div className="header-top">
+                                    <div className="header-title">{t.app_title}</div>
+                                    <select className="language-menu" value={language} onChange={(e) => setLanguage(e.target.value)}>
+                                        <option value="en">EN</option>
+                                        <option value="hi">HI</option>
+                                        <option value="ta">TA</option>
+                                        <option value="te">TE</option>
+                                        <option value="kn">KN</option>
+                                    </select>
+                                </div>
+                                <div className="user-role">{t[userRole]}</div>
+                                <div className="role-selector">
+                                    <button className={`role-btn ${userRole === 'phc_staff' ? 'active' : ''}`} onClick={() => setUserRole('phc_staff')}>PHC</button>
+                                    <button className={`role-btn ${userRole === 'district_admin' ? 'active' : ''}`} onClick={() => setUserRole('district_admin')}>District</button>
+                                    <button className={`role-btn ${userRole === 'state_director' ? 'active' : ''}`} onClick={() => setUserRole('state_director')}>State</button>
+                                </div>
+                            </div>
+                            
+                            {showNotification && (
+                                <div className="notification-badge danger">
+                                    <span>⚠️</span>
+                                    <span>{t.stock_critical}</span>
+                                    <span className="notification-badge dismiss" onClick={() => setShowNotification(false)}>✕</span>
+                                </div>
+                            )}
+                            
+                            <div className="content" style={{paddingTop: showNotification ? '50px' : '16px'}}>
+                                {currentView === 'home' && (
+                                    <>
+                                        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px'}}>
+                                            <div className="card">
+                                                <div className="stat-label">{t.bed_occupancy}</div>
+                                                <div style={{fontSize: '24px', fontWeight: '600', color: 'var(--primary)', marginBottom: '4px'}}>
+                                                    {stats[userRole].bed_occupancy || stats[userRole].total_phcs}
+                                                </div>
+                                                <div style={{fontSize: '11px', color: 'var(--success)'}}>↑ 2% from yesterday</div>
+                                            </div>
+                                            <div className="card">
+                                                <div className="stat-label">{t.medicine_stock}</div>
+                                                <div style={{fontSize: '24px', fontWeight: '600', color: 'var(--primary)', marginBottom: '4px'}}>
+                                                    {stats[userRole].medicine_stock || stats[userRole].stock_status}
+                                                </div>
+                                                <div style={{fontSize: '11px', color: 'var(--neutral-600)'}}>2 low items</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="card">
+                                            <div className="card-header">
+                                                {t.pending_approvals}
+                                                <span className="badge badge-danger">2</span>
+                                            </div>
+                                            <div className="workflow-step active">
+                                                <div className="workflow-icon">⏳</div>
+                                                <div className="workflow-content">
+                                                    <div className="workflow-title">{t.medicine_request}</div>
+                                                    <div className="workflow-time">Awaiting your approval</div>
+                                                </div>
+                                            </div>
+                                            <button className="btn btn-primary" style={{marginTop: '8px'}}>{t.approve}</button>
+                                        </div>
+                                        
+                                        <div className="card">
+                                            <div className="card-header">{t.quick_actions}</div>
+                                            <button className="btn btn-secondary mb-2" style={{marginBottom: '8px'}} onClick={() => setCurrentView('medicines')}>{t.check_stock}</button>
+                                            <button className="btn btn-secondary mb-2" style={{marginBottom: '8px'}} onClick={() => setCurrentView('workflows')}>{t.request_transfer}</button>
+                                            <button className="btn btn-secondary mb-2" style={{marginBottom: '8px'}}>{t.view_forecast}</button>
+                                            <button className="btn btn-secondary" onClick={() => setShowExportModal(true)}>{t.export_data}</button>
+                                        </div>
+                                    </>
+                                )}
+                                
+                                {currentView === 'medicines' && (
+                                    <>
+                                        <div className="card">
+                                            <div className="card-header">{t.total_medicines}</div>
+                                            <div style={{fontSize: '20px', fontWeight: '600', marginBottom: '8px'}}>24</div>
+                                            <div style={{fontSize: '12px', color: 'var(--neutral-600)'}}>
+                                                <span className="badge badge-warning" style={{marginRight: '4px'}}>3 Low</span>
+                                                <span className="badge badge-danger">1 Critical</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="card">
+                                            <div className="card-header" style={{color: 'var(--danger)'}}>🔴 Amoxicillin 250mg</div>
+                                            <div className="stat-row">
+                                                <span className="stat-label">{t.current_stock}</span>
+                                                <span className="stat-value" style={{color: 'var(--danger)'}}>45 units</span>
+                                            </div>
+                                            <div className="progress-bar">
+                                                <div className="progress-fill" style={{width: '20%', background: 'var(--danger)'}}></div>
+                                            </div>
+                                            <button className="btn btn-danger" style={{marginTop: '8px'}}>{t.request_transfer}</button>
+                                        </div>
+                                        
+                                        <div className="card">
+                                            <div className="card-header" style={{color: 'var(--warning)'}}>🟡 Paracetamol 500mg</div>
+                                            <div className="stat-row">
+                                                <span className="stat-label">{t.current_stock}</span>
+                                                <span className="stat-value">156 units</span>
+                                            </div>
+                                            <div className="progress-bar">
+                                                <div className="progress-fill" style={{width: '60%'}}></div>
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
+                                
+                                {currentView === 'workflows' && (
+                                    <>
+                                        <div className="card">
+                                            <div className="card-header">{t.workflow_timeline}</div>
+                                            {workflows.map((w, idx) => (
+                                                <div 
+                                                    key={idx} 
+                                                    className={`workflow-step ${w.status === 'active' ? 'active' : w.status === 'completed' ? 'completed' : ''}`}
+                                                >
+                                                    <div className="workflow-icon">{w.icon}</div>
+                                                    <div className="workflow-content">
+                                                        <div className="workflow-title">{t[w.step.toLowerCase().replace(' ', '_')]}</div>
+                                                        <div className="workflow-time">{w.time}</div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        
+                                        {userRole === 'district_admin' && (
+                                            <div className="card">
+                                                <div className="card-header">{t.approval_needed}</div>
+                                                <div className="btn-group">
+                                                    <button className="btn btn-success">{t.approve}</button>
+                                                    <button className="btn btn-secondary">{t.review}</button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                                
+                                {currentView === 'reports' && (
+                                    <>
+                                        <div className="card">
+                                            <div className="card-header">📊 {t.reports}</div>
+                                            <button className="btn btn-secondary mb-2" style={{marginBottom: '8px'}} onClick={() => setShowExportModal(true)}>📥 {t.export_data}</button>
+                                            <button className="btn btn-secondary">📧 Email Report</button>
+                                        </div>
+                                    </>
+                                )}
+                                
+                                {currentView === 'settings' && (
+                                    <>
+                                        <div className="card">
+                                            <div className="card-header">{t.dashboard_settings}</div>
+                                            <div style={{fontSize: '12px', marginBottom: '12px', color: 'var(--neutral-600)'}}>
+                                                {t.customize_widgets}
+                                            </div>
+                                            <button className="btn btn-secondary mb-2" style={{marginBottom: '8px'}}>{t.enable_notifications}</button>
+                                            <button className="btn btn-secondary mb-2" style={{marginBottom: '8px'}}>{t.language}: {translations[language][language]}</button>
+                                            <button className="btn btn-secondary">🔐 Privacy Settings</button>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                        
+                        <div className="bottom-nav">
+                            <div className={`nav-item ${currentView === 'home' ? 'active' : ''}`} onClick={() => setCurrentView('home')}>
+                                <span>🏠</span>
+                                <span>{t.home}</span>
+                            </div>
+                            <div className={`nav-item ${currentView === 'medicines' ? 'active' : ''}`} onClick={() => setCurrentView('medicines')}>
+                                <span>💊</span>
+                                <span>{t.medicines}</span>
+                            </div>
+                            <div className={`nav-item ${currentView === 'workflows' ? 'active' : ''}`} onClick={() => setCurrentView('workflows')}>
+                                <span style={{position: 'relative'}}>⚙️
+                                    {currentView !== 'workflows' && <span className="nav-badge">2</span>}
+                                </span>
+                                <span>{t.workflows}</span>
+                            </div>
+                            <div className={`nav-item ${currentView === 'reports' ? 'active' : ''}`} onClick={() => setCurrentView('reports')}>
+                                <span>📊</span>
+                                <span>{t.reports}</span>
+                            </div>
+                            <div className={`nav-item ${currentView === 'settings' ? 'active' : ''}`} onClick={() => setCurrentView('settings')}>
+                                <span>⚙️</span>
+                                <span>{t.settings}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {showExportModal && (
+                        <div className="export-modal" onClick={() => setShowExportModal(false)}>
+                            <div className="export-sheet" onClick={(e) => e.stopPropagation()}>
+                                <h3 style={{marginBottom: '12px', fontSize: '16px', fontWeight: '600'}}>📤 {t.export_data}</h3>
+                                <div className="export-option">
+                                    <span>📄 {t.export_as_pdf}</span>
+                                    <span>→</span>
+                                </div>
+                                <div className="export-option">
+                                    <span>📊 {t.export_as_csv}</span>
+                                    <span>→</span>
+                                </div>
+                                <div className="export-option">
+                                    <span>📧 {t.send_to_email}</span>
+                                    <span>→</span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+        
+        ReactDOM.createRoot(document.getElementById('root')).render(<MobileApp />);
+    </script>
+</body>
+</html>

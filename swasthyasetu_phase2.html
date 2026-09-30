@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwasthyaSetu AI - National Health Grid</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body, #root { height: 100%; width: 100%; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #fafbfc;
+            color: #1a202c;
+            line-height: 1.6;
+        }
+        
+        /* Color System */
+        :root {
+            --primary: #0F4C75;
+            --primary-dark: #0a2f52;
+            --primary-light: #1a6fa0;
+            --success: #3ECF8E;
+            --success-light: #d1fae5;
+            --warning: #F7B32B;
+            --warning-light: #fef3c7;
+            --danger: #E63946;
+            --danger-light: #fee2e2;
+            --neutral-50: #f9fafb;
+            --neutral-100: #f3f4f6;
+            --neutral-200: #e5e7eb;
+            --neutral-400: #9ca3af;
+            --neutral-600: #4b5563;
+            --neutral-800: #1f2937;
+            --neutral-900: #111827;
+        }
+        
+        /* Typography */
+        .text-xs { font-size: 12px; }
+        .text-sm { font-size: 13px; }
+        .text-base { font-size: 14px; }
+        .text-lg { font-size: 16px; }
+        .text-xl { font-size: 18px; }
+        .text-2xl { font-size: 22px; }
+        .text-3xl { font-size: 28px; }
+        .font-400 { font-weight: 400; }
+        .font-500 { font-weight: 500; }
+        .font-600 { font-weight: 600; }
+        
+        /* Spacing & Layout */
+        .px-4 { padding-left: 16px; padding-right: 16px; }
+        .py-4 { padding-top: 16px; padding-bottom: 16px; }
+        .py-6 { padding-top: 24px; padding-bottom: 24px; }
+        .mb-2 { margin-bottom: 8px; }
+        .mb-3 { margin-bottom: 12px; }
+        .mb-4 { margin-bottom: 16px; }
+        .mb-6 { margin-bottom: 24px; }
+        .gap-2 { gap: 8px; }
+        .gap-3 { gap: 12px; }
+        .gap-4 { gap: 16px; }
+        
+        /* Cards */
+        .card {
+            background: white;
+            border: 1px solid var(--neutral-200);
+            border-radius: 10px;
+            padding: 16px;
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(15, 76, 117, 0.1);
+        }
+        
+        /* Status Badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .badge-success { background: var(--success-light); color: #065f46; }
+        .badge-warning { background: var(--warning-light); color: #92400e; }
+        .badge-danger { background: var(--danger-light); color: #991b1b; }
+        
+        /* Buttons */
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-secondary {
+            background: var(--neutral-100);
+            color: var(--primary);
+            border: 1px solid var(--neutral-200);
+        }
+        .btn-secondary:hover { background: var(--neutral-200); }
+        .btn-sm {
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+        
+        /* Forms */
+        .input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--neutral-200);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        .input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(15, 76, 117, 0.1);
+        }
+        
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--neutral-200);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            transition: width 0.6s ease;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideInUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        @keyframes slideInLeft {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .fade-in { animation: fadeIn 0.3s ease; }
+        .slide-in-up { animation: slideInUp 0.4s ease; }
+        .pulse { animation: pulse 2s ease-in-out infinite; }
+        .slide-in-left { animation: slideInLeft 0.3s ease; }
+        
+        /* Layout */
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 200px;
+            background: #f8f9fa;
+            border-right: 1px solid var(--neutral-200);
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        .sidebar-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        .sidebar-item:hover, .sidebar-item.active {
+            background: white;
+            border-left-color: var(--primary);
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: white;
+            border-bottom: 1px solid var(--neutral-200);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .content {
+            flex: 1;
+            padding: 24px;
+        }
+        
+        /* Grid */
+        .grid { display: grid; grid-gap: 16px; }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-4 { grid-template-columns: repeat(4, 1fr); }
+        
+        /* Stat Card */
+        .stat-card {
+            background: white;
+            border: 1px solid var(--neutral-200);
+            border-radius: 10px;
+            padding: 16px;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--neutral-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+        .stat-change {
+            font-size: 12px;
+            color: var(--success);
+        }
+        
+        /* Heatmap */
+        .heatmap-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .heatmap-cell {
+            flex: 1;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .heatmap-cell:hover { transform: scale(1.05); }
+        .heatmap-green { background: var(--success-light); color: #065f46; }
+        .heatmap-yellow { background: var(--warning-light); color: #92400e; }
+        .heatmap-red { background: var(--danger-light); color: #991b1b; }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--neutral-200);
+            margin-bottom: 20px;
+            gap: 0;
+        }
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--neutral-600);
+        }
+        .tab:hover { color: var(--primary); }
+        .tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        /* Alert Banner */
+        .alert-banner {
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .alert-banner.critical {
+            background: #fee2e2;
+            border-color: #fca5a5;
+        }
+        .alert-icon {
+            font-size: 18px;
+        }
+        
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+        
+        /* Mobile Bottom Nav */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid var(--neutral-200);
+            padding: 8px 0;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            z-index: 50;
+        }
+        
+        .nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 8px;
+            font-size: 11px;
+            cursor: pointer;
+            color: var(--neutral-600);
+            border: none;
+            background: none;
+            transition: color 0.2s;
+        }
+        .nav-btn.active { color: var(--primary); }
+        
+        /* Recommendation Card */
+        .recommendation-card {
+            background: linear-gradient(135deg, #f0f9ff 0%, #dbeafe 100%);
+            border: 1px solid #bfdbfe;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+        .recommendation-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+        .recommendation-detail {
+            font-size: 13px;
+            color: var(--neutral-700);
+            margin-bottom: 12px;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .grid-3 { grid-template-columns: 1fr; }
+            .grid-4 { grid-template-columns: repeat(2, 1fr); }
+            .content { padding-bottom: 100px; }
+            .mobile-nav { display: grid; }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        
+        // ============ MOCK DATA ============
+        
+        // Generate realistic PHC data across multiple districts
+        const generatePHCs = () => {
+            const districts = ['Central', 'East', 'West', 'North', 'South'];
+            const phcs = [];
+            let id = 1;
+            
+            const medicines = ['Paracetamol', 'Amoxicillin', 'Ibuprofen', 'Metformin', 'Aspirin', 'Lisinopril', 'Omeprazole', 'Ciprofloxacin'];
+            
+            for (let d = 0; d < districts.length; d++) {
+                for (let p = 0; p < 4; p++) {
+                    const baseConsumption = 80 + Math.random() * 40;
+                    const demandTrend = 1 + (Math.random() - 0.5) * 0.3;
+                    
+                    phcs.push({
+                        id: id++,
+                        name: `PHC ${String.fromCharCode(65 + p)} - ${districts[d]}`,
+                        district: districts[d],
+                        beds: 6 + Math.floor(Math.random() * 8),
+                        bedsOccupied: Math.floor((6 + Math.random() * 8) * (0.5 + Math.random() * 0.3)),
+                        medicines: Array.from({length: 5}, (_, i) => ({
+                            name: medicines[Math.floor(Math.random() * medicines.length)],
+                            stock: Math.floor(100 + Math.random() * 900),
+                            consumption: Math.floor(baseConsumption),
+                            trend: Math.random() > 0.7 ? 'up' : 'stable'
+                        })),
+                        staff: Math.floor(3 + Math.random() * 5),
+                        footfall: Math.floor(30 + Math.random() * 70),
+                        status: Math.random() > 0.85 ? 'critical' : Math.random() > 0.70 ? 'warning' : 'available',
+                        distance: (2 + Math.random() * 8).toFixed(1),
+                        demandTrend: demandTrend
+                    });
+                }
+            }
+            return phcs;
+        };
+        
+        // Generate demand forecast data
+        const generateForecast = () => {
+            return {
+                days: ['Today', '+1', '+2', '+3', '+4', '+5', '+6', '+7'],
+                stockOut: Math.random() > 0.7 ? 4 : 6,
+                confidence: 87 + Math.floor(Math.random() * 10),
+                consumption: [120, 135, 145, 158, 172, 168, 152, 138],
+                available: [1200, 1080, 945, 800, 642, 474, 322, 184]
+            };
+        };
+        
+        // Main App Component
+        function SwasthyaSetu() {
+            const [userRole, setUserRole] = useState('citizen'); // citizen or authority
+            const [currentView, setCurrentView] = useState('home');
+            const [selectedDistrict, setSelectedDistrict] = useState(null);
+            const [phcs] = useState(() => generatePHCs());
+            const [forecast] = useState(() => generateForecast());
+            const [activeTab, setActiveTab] = useState('live');
+            const canvasRef = useRef(null);
+            const chartInstanceRef = useRef(null);
+            
+            // Render demand forecast chart
+            useEffect(() => {
+                if (userRole === 'authority' && activeTab === 'forecast' && canvasRef.current) {
+                    if (chartInstanceRef.current) {
+                        chartInstanceRef.current.destroy();
+                    }
+                    
+                    const ctx = canvasRef.current.getContext('2d');
+                    chartInstanceRef.current = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: forecast.days,
+                            datasets: [
+                                {
+                                    label: 'Stock Available',
+                                    data: forecast.available,
+                                    borderColor: '#0F4C75',
+                                    backgroundColor: 'rgba(15, 76, 117, 0.1)',
+                                    borderWidth: 2,
+                                    tension: 0.4,
+                                    fill: true,
+                                    pointRadius: 5,
+                                    pointBackgroundColor: '#0F4C75'
+                                },
+                                {
+                                    label: 'Daily Consumption',
+                                    data: forecast.consumption,
+                                    borderColor: '#F7B32B',
+                                    backgroundColor: 'rgba(247, 179, 43, 0.1)',
+                                    borderWidth: 2,
+                                    tension: 0.4,
+                                    fill: false,
+                                    pointRadius: 4,
+                                    pointBackgroundColor: '#F7B32B'
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { position: 'top' } },
+                            scales: {
+                                y: { beginAtZero: true, title: { display: true, text: 'Units' } }
+                            }
+                        }
+                    });
+                }
+            }, [userRole, activeTab]);
+            
+            // Get district stats
+            const getDistrictStats = (district) => {
+                const districtPhcs = phcs.filter(p => p.district === district);
+                return {
+                    totalPhcs: districtPhcs.length,
+                    totalBeds: districtPhcs.reduce((sum, p) => sum + p.beds, 0),
+                    bedsAvailable: districtPhcs.reduce((sum, p) => sum + (p.beds - p.bedsOccupied), 0),
+                    avgFootfall: Math.floor(districtPhcs.reduce((sum, p) => sum + p.footfall, 0) / districtPhcs.length),
+                    criticalPhcs: districtPhcs.filter(p => p.status === 'critical').length,
+                    warningPhcs: districtPhcs.filter(p => p.status === 'warning').length
+                };
+            };
+            
+            // CITIZEN VIEW
+            if (userRole === 'citizen') {
+                return (
+                    <div className="fade-in" style={{background: 'white', minHeight: '100vh'}}>
+                        {/* Header */}
+                        <div className="header" style={{background: 'linear-gradient(135deg, #0F4C75 0%, #1a6fa0 100%)', color: 'white'}}>
+                            <div>
+                                <h1 className="text-2xl font-600">SwasthyaSetu AI</h1>
+                                <p className="text-xs" style={{opacity: 0.9}}>India's Intelligent Health Network</p>
+                            </div>
+                            <button className="btn btn-secondary" onClick={() => setUserRole('authority')}>
+                                Authority Access
+                            </button>
+                        </div>
+                        
+                        <div className="content">
+                            {/* Hero */}
+                            {currentView === 'home' && (
+                                <div className="slide-in-up">
+                                    <div className="mb-6" style={{textAlign: 'center'}}>
+                                        <h2 className="text-3xl font-600 mb-2">Find Care Near You</h2>
+                                        <p className="text-base text-neutral-600">Access healthcare resources instantly</p>
+                                    </div>
+                                    
+                                    {/* Quick Stats */}
+                                    <div className="grid grid-4 mb-6">
+                                        <div className="stat-card">
+                                            <div className="stat-label">PHCs Connected</div>
+                                            <div className="stat-value">1,873</div>
+                                            <div className="stat-change">↑ 12%</div>
+                                        </div>
+                                        <div className="stat-card">
+                                            <div className="stat-label">Beds Available</div>
+                                            <div className="stat-value">15.4K</div>
+                                            <div className="stat-change">↑ 8%</div>
+                                        </div>
+                                        <div className="stat-card">
+                                            <div className="stat-label">Medicine Stock</div>
+                                            <div className="stat-value">91%</div>
+                                            <div className="stat-change" style={{color: 'var(--warning)'}}>→ Stable</div>
+                                        </div>
+                                        <div className="stat-card">
+                                            <div className="stat-label">Health Status</div>
+                                            <div style={{fontSize: '24px', margin: '8px 0'}}>🟢</div>
+                                            <div className="stat-change">Stable</div>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Action Buttons */}
+                                    <div style={{display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', marginBottom: '24px'}}>
+                                        <button 
+                                            className="btn btn-primary"
+                                            onClick={() => setCurrentView('find')}
+                                            style={{padding: '12px'}}
+                                        >
+                                            🗺️ Find Healthcare
+                                        </button>
+                                        <button 
+                                            className="btn btn-primary"
+                                            onClick={() => setCurrentView('medicine')}
+                                            style={{padding: '12px'}}
+                                        >
+                                            💊 Find Medicine
+                                        </button>
+                                        <button 
+                                            className="btn btn-secondary"
+                                            onClick={() => setCurrentView('pulse')}
+                                            style={{padding: '12px'}}
+                                        >
+                                            📊 Health Pulse
+                                        </button>
+                                        <button 
+                                            className="btn btn-secondary"
+                                            onClick={() => setCurrentView('alerts')}
+                                            style={{padding: '12px'}}
+                                        >
+                                            🚨 Alerts
+                                        </button>
+                                    </div>
+                                    
+                                    {/* Featured Facilities */}
+                                    <h3 className="text-lg font-600 mb-3">Nearby Facilities</h3>
+                                    <div className="grid grid-2">
+                                        {phcs.slice(0, 4).map(phc => (
+                                            <div key={phc.id} className="card slide-in-left">
+                                                <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '12px'}}>
+                                                    <div>
+                                                        <h4 className="text-base font-500">{phc.name.split(' - ')[0]}</h4>
+                                                        <p className="text-xs text-neutral-600">{phc.distance} km away</p>
+                                                    </div>
+                                                    <span className={`badge badge-${phc.status}`}>
+                                                        {phc.status === 'available' ? '🟢' : phc.status === 'warning' ? '🟡' : '🔴'}
+                                                    </span>
+                                                </div>
+                                                <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px'}}>
+                                                    <div>
+                                                        <p className="text-xs text-neutral-600">Beds</p>
+                                                        <p className="text-lg font-600">{phc.beds - phc.bedsOccupied}/{phc.beds}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-xs text-neutral-600">Waiting</p>
+                                                        <p className="text-lg font-600" style={{color: phc.footfall > 60 ? 'var(--warning)' : 'var(--success)'}}>
+                                                            {phc.footfall > 60 ? 'High' : 'Low'}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <button className="btn btn-primary" style={{width: '100%', fontSize: '12px', padding: '8px'}}>
+                                                    Get Directions
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                            
+                            {/* Find Healthcare */}
+                            {currentView === 'find' && (
+                                <div className="fade-in">
+                                    <button className="btn btn-secondary btn-sm mb-4" onClick={() => setCurrentView('home')}>← Back</button>
+                                    <h2 className="text-2xl font-600 mb-4">Find Healthcare Near Me</h2>
+                                    
+                                    {phcs.slice(0, 8).map(phc => (
+                                        <div key={phc.id} className="card slide-in-left mb-3">
+                                            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '12px'}}>
+                                                <div>
+                                                    <h3 className="text-base font-500">{phc.name}</h3>
+                                                    <p className="text-xs text-neutral-600">{phc.district} • {phc.distance} km</p>
+                                                </div>
+                                                <span className={`badge badge-${phc.status}`}>
+                                                    {phc.status === 'available' ? 'Available' : phc.status === 'warning' ? 'Caution' : 'Critical'}
+                                                </span>
+                                            </div>
+                                            <div style={{display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '12px', fontSize: '12px'}}>
+                                                <div>
+                                                    <p className="text-neutral-600">Beds</p>
+                                                    <p className="font-600">{phc.beds - phc.bedsOccupied} free</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-neutral-600">Staff</p>
+                                                    <p className="font-600" style={{color: 'var(--success)'}}>{phc.staff}/5</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-neutral-600">Footfall</p>
+                                                    <p className="font-600">{phc.footfall}/100</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                            
+                            {/* Medicine Finder */}
+                            {currentView === 'medicine' && (
+                                <div className="fade-in">
+                                    <button className="btn btn-secondary btn-sm mb-4" onClick={() => setCurrentView('home')}>← Back</button>
+                                    <h2 className="text-2xl font-600 mb-4">Find a Medicine</h2>
+                                    
+                                    {phcs.slice(0, 6).map(phc => (
+                                        <div key={phc.id} className="card mb-3">
+                                            <h3 className="text-base font-500 mb-3">{phc.name}</h3>
+                                            {phc.medicines.slice(0, 3).map((med, idx) => {
+                                                const lowStock = med.stock < 200;
+                                                return (
+                                                    <div key={idx} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', padding: '8px', background: lowStock ? 'var(--warning-light)' : 'var(--neutral-100)', borderRadius: '6px'}}>
+                                                        <div>
+                                                            <p className="text-sm font-500">{med.name}</p>
+                                                            <p className="text-xs text-neutral-600">{med.stock} units in stock</p>
+                                                        </div>
+                                                        <span className={`badge badge-${lowStock ? 'warning' : 'success'}`}>
+                                                            {lowStock ? 'Low' : 'Available'}
+                                                        </span>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                            
+                            {/* Health Pulse */}
+                            {currentView === 'pulse' && (
+                                <div className="fade-in">
+                                    <button className="btn btn-secondary btn-sm mb-4" onClick={() => setCurrentView('home')}>← Back</button>
+                                    <h2 className="text-2xl font-600 mb-6">Health Pulse 🇮🇳</h2>
+                                    
+                                    <div className="card mb-6" style={{background: 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)', border: '1px solid #6ee7b7'}}>
+                                        <p className="text-xs font-500 text-neutral-700 mb-2">NETWORK STATUS</p>
+                                        <p className="text-2xl font-600" style={{color: 'var(--success)'}}>🟢 STABLE</p>
+                                    </div>
+                                    
+                                    <div className="grid grid-2 mb-6">
+                                        <div className="card">
+                                            <p className="text-xs text-neutral-600 mb-2">Medicine Availability</p>
+                                            <div className="progress-bar mb-2">
+                                                <div className="progress-fill" style={{width: '91%'}}></div>
+                                            </div>
+                                            <p className="text-lg font-600">91%</p>
+                                        </div>
+                                        <div className="card">
+                                            <p className="text-xs text-neutral-600 mb-2">Bed Availability</p>
+                                            <div className="progress-bar mb-2">
+                                                <div className="progress-fill" style={{width: '82%'}}></div>
+                                            </div>
+                                            <p className="text-lg font-600">82%</p>
+                                        </div>
+                                        <div className="card">
+                                            <p className="text-xs text-neutral-600 mb-2">Workforce Available</p>
+                                            <div className="progress-bar mb-2">
+                                                <div className="progress-fill" style={{width: '94%'}}></div>
+                                            </div>
+                                            <p className="text-lg font-600">94%</p>
+                                        </div>
+                                        <div className="card">
+                                            <p className="text-xs text-neutral-600 mb-2">Essential Supplies</p>
+                                            <div className="progress-bar mb-2">
+                                                <div className="progress-fill" style={{width: '86%'}}></div>
+                                            </div>
+                                            <p className="text-lg font-600">86%</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            
+                            {/* Alerts */}
+                            {currentView === 'alerts' && (
+                                <div className="fade-in">
+                                    <button className="btn btn-secondary btn-sm mb-4" onClick={() => setCurrentView('home')}>← Back</button>
+                                    <h2 className="text-2xl font-600 mb-4">Health Alerts</h2>
+                                    
+                                    <div className="alert-banner critical pulse">
+                                        <span className="alert-icon">🔴</span>
+                                        <div>
+                                            <p className="text-sm font-600">Critical Alert - South District</p>
+                                            <p className="text-xs" style={{opacity: 0.9}}>Medicine shortage predicted in 2 days</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="alert-banner">
+                                        <span className="alert-icon">🟡</span>
+                                        <div>
+                                            <p className="text-sm font-600">Watch - West District</p>
+                                            <p className="text-xs" style={{opacity: 0.9}}>Bed capacity at 85%, trending upward</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                );
+            }
+            
+            // AUTHORITY VIEW
+            return (
+                <div className="fade-in" style={{display: 'flex', height: '100vh', background: 'white'}}>
+                    {/* Sidebar */}
+                    <div className="sidebar">
+                        <div style={{padding: '0 16px', marginBottom: '24px', borderBottom: '1px solid var(--neutral-200)'}}>
+                            <h2 className="text-lg font-600" style={{color: 'var(--primary)'}}>SwasthyaSetu</h2>
+                            <p className="text-xs text-neutral-600">Authority Dashboard</p>
+                        </div>
+                        
+                        <div 
+                            className={`sidebar-item ${currentView === 'overview' ? 'active' : ''}`}
+                            onClick={() => { setCurrentView('overview'); setSelectedDistrict(null); }}
+                        >
+                            📊 Overview
+                        </div>
+                        
+                        <p style={{padding: '16px 16px 8px', fontSize: '12px', color: 'var(--neutral-600)', textTransform: 'uppercase', fontWeight: '500', letterSpacing: '0.5px'}}>Districts</p>
+                        
+                        {['Central', 'East', 'West', 'North', 'South'].map(district => (
+                            <div 
+                                key={district}
+                                className={`sidebar-item ${selectedDistrict === district ? 'active' : ''}`}
+                                onClick={() => { setCurrentView('district'); setSelectedDistrict(district); }}
+                            >
+                                {district}
+                            </div>
+                        ))}
+                        
+                        <div style={{marginTop: 'auto', padding: '16px', borderTop: '1px solid var(--neutral-200)'}}>
+                            <button className="btn btn-secondary" style={{width: '100%', fontSize: '12px', padding: '8px'}} onClick={() => setUserRole('citizen')}>
+                                ← Citizen View
+                            </button>
+                        </div>
+                    </div>
+                    
+                    {/* Main Content */}
+                    <div className="main-content">
+                        {/* Header */}
+                        <div className="header">
+                            <div>
+                                <h1 className="text-2xl font-600">
+                                    {currentView === 'overview' ? 'National Health Overview' : `${selectedDistrict} District Command Center`}
+                                </h1>
+                            </div>
+                            <div style={{display: 'flex', gap: '8px'}}>
+                                <span style={{fontSize: '12px', color: 'var(--neutral-600)'}}>Last updated: 5 min ago</span>
+                            </div>
+                        </div>
+                        
+                        {/* Content */}
+                        <div className="content">
+                            {currentView === 'overview' && (
+                                <div className="fade-in">
+                                    {/* Critical Alerts */}
+                                    <div className="alert-banner critical pulse mb-4">
+                                        <span className="alert-icon">🔴</span>
+                                        <div style={{flex: 1}}>
+                                            <p className="text-sm font-600">2 Critical Alerts Active</p>
+                                            <p className="text-xs" style={{opacity: 0.9}}>South District: Medicine shortage in 2 days | West District: Bed capacity 85%</p>
+                                        </div>
+                                        <button className="btn btn-sm" style={{background: 'var(--danger)', color: 'white', marginLeft: 'auto'}}>Review</button>
+                                    </div>
+                                    
+                                    {/* National Stats */}
+                                    <h2 className="text-lg font-600 mb-4">National Metrics</h2>
+                                    <div className="grid grid-4 mb-6">
+                                        <div className="stat-card">
+                                            <div className="stat-label">PHCs Connected</div>
+                                            <div className="stat-value">1,873</div>
+                                            <div className="stat-change">100% online</div>
+                                        </div>
+                                        <div className="stat-card">
+                                            <div className="stat-label">Total Beds</div>
+                                            <div className="stat-value">15.4K</div>
+                                            <div className="stat-change">4.2K in use</div>
+                                        </div>
+                                        <div className="stat-card">
+                                            <div className="stat-label">Medicine Stock</div>
+                                            <div className="stat-value">91%</div>
+                                            <div className="stat-change">↓ 2% from yesterday</div>
+                                        </div>
+                                        <div className="stat-card">
+                                            <div className="stat-label">Critical Alerts</div>
+                                            <div className="stat-value">2</div>
+                                            <div className="stat-change" style={{color: 'var(--danger)'}}>↑ From 1</div>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* District Heatmap */}
+                                    <h2 className="text-lg font-600 mb-3">District Health Status</h2>
+                                    <div style={{background: 'white', border: '1px solid var(--neutral-200)', borderRadius: '10px', padding: '16px', marginBottom: '24px'}}>
+                                        <div className="heatmap-row">
+                                            <div className="heatmap-cell heatmap-green" onClick={() => { setCurrentView('district'); setSelectedDistrict('Central'); }}>Central</div>
+                                            <div className="heatmap-cell heatmap-green" onClick={() => { setCurrentView('district'); setSelectedDistrict('East'); }}>East</div>
+                                        </div>
+                                        <div className="heatmap-row">
+                                            <div className="heatmap-cell heatmap-yellow" onClick={() => { setCurrentView('district'); setSelectedDistrict('West'); }}>West</div>
+                                            <div className="heatmap-cell heatmap-yellow" onClick={() => { setCurrentView('district'); setSelectedDistrict('North'); }}>North</div>
+                                        </div>
+                                        <div className="heatmap-row">
+                                            <div className="heatmap-cell heatmap-red" onClick={() => { setCurrentView('district'); setSelectedDistrict('South'); }}>South</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            
+                            {currentView === 'district' && selectedDistrict && (
+                                <div className="fade-in">
+                                    {(() => {
+                                        const stats = getDistrictStats(selectedDistrict);
+                                        return (
+                                            <>
+                                                {/* Alert if critical */}
+                                                {stats.criticalPhcs > 0 && (
+                                                    <div className="alert-banner critical mb-4 pulse">
+                                                        <span className="alert-icon">🔴</span>
+                                                        <div>
+                                                            <p className="text-sm font-600">Critical Alert</p>
+                                                            <p className="text-xs" style={{opacity: 0.9}}>{stats.criticalPhcs} facility needs immediate attention</p>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                
+                                                {/* District Stats */}
+                                                <div className="grid grid-4 mb-6">
+                                                    <div className="stat-card">
+                                                        <div className="stat-label">PHCs</div>
+                                                        <div className="stat-value">{stats.totalPhcs}</div>
+                                                    </div>
+                                                    <div className="stat-card">
+                                                        <div className="stat-label">Beds Available</div>
+                                                        <div className="stat-value">{stats.bedsAvailable}/{stats.totalBeds}</div>
+                                                    </div>
+                                                    <div className="stat-card">
+                                                        <div className="stat-label">Avg Footfall</div>
+                                                        <div className="stat-value">{stats.avgFootfall}</div>
+                                                        <div className="stat-change">patients/day</div>
+                                                    </div>
+                                                    <div className="stat-card">
+                                                        <div className="stat-label">Status</div>
+                                                        <div style={{fontSize: '24px', margin: '8px 0'}}>
+                                                            {stats.criticalPhcs > 0 ? '🔴' : stats.warningPhcs > 0 ? '🟡' : '🟢'}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                {/* Tabs */}
+                                                <div className="tabs" style={{marginBottom: '16px'}}>
+                                                    <div className={`tab ${activeTab === 'live' ? 'active' : ''}`} onClick={() => setActiveTab('live')}>Live</div>
+                                                    <div className={`tab ${activeTab === 'forecast' ? 'active' : ''}`} onClick={() => setActiveTab('forecast')}>Forecast</div>
+                                                    <div className={`tab ${activeTab === 'alerts' ? 'active' : ''}`} onClick={() => setActiveTab('alerts')}>Alerts</div>
+                                                    <div className={`tab ${activeTab === 'recommendations' ? 'active' : ''}`} onClick={() => setActiveTab('recommendations')}>Recommendations</div>
+                                                </div>
+                                                
+                                                {/* Live Tab */}
+                                                {activeTab === 'live' && (
+                                                    <div>
+                                                        <h3 className="text-lg font-600 mb-3">Facility Status</h3>
+                                                        {phcs.filter(p => p.district === selectedDistrict).map(phc => (
+                                                            <div key={phc.id} className="card mb-3 slide-in-left">
+                                                                <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '12px'}}>
+                                                                    <h4 className="text-base font-500">{phc.name}</h4>
+                                                                    <span className={`badge badge-${phc.status}`}>
+                                                                        {phc.status === 'available' ? '🟢 Available' : phc.status === 'warning' ? '🟡 Watch' : '🔴 Critical'}
+                                                                    </span>
+                                                                </div>
+                                                                <div style={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', fontSize: '12px'}}>
+                                                                    <div>
+                                                                        <p className="text-neutral-600">Beds</p>
+                                                                        <p className="font-600">{phc.beds - phc.bedsOccupied}/{phc.beds}</p>
+                                                                    </div>
+                                                                    <div>
+                                                                        <p className="text-neutral-600">Footfall</p>
+                                                                        <p className="font-600">{phc.footfall}</p>
+                                                                    </div>
+                                                                    <div>
+                                                                        <p className="text-neutral-600">Staff</p>
+                                                                        <p className="font-600">{phc.staff}/5</p>
+                                                                    </div>
+                                                                    <div>
+                                                                        <p className="text-neutral-600">Demand Trend</p>
+                                                                        <p className="font-600" style={{color: phc.demandTrend > 1.1 ? 'var(--warning)' : 'var(--success)'}}>
+                                                                            {phc.demandTrend > 1.1 ? '↑ Rising' : '→ Stable'}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                                
+                                                {/* Forecast Tab */}
+                                                {activeTab === 'forecast' && (
+                                                    <div>
+                                                        <h3 className="text-lg font-600 mb-3">Medicine Demand Forecast</h3>
+                                                        <div className="card mb-4">
+                                                            <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '16px'}}>
+                                                                <div>
+                                                                    <p className="text-sm text-neutral-600">Amoxicillin 250mg</p>
+                                                                    <p className="text-2xl font-600" style={{color: 'var(--primary)'}}>Predicted stock-out in {forecast.stockOut} days</p>
+                                                                    <p className="text-xs text-neutral-600 mt-2">Confidence: {forecast.confidence}%</p>
+                                                                </div>
+                                                            </div>
+                                                            <div className="chart-container">
+                                                                <canvas ref={canvasRef}></canvas>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                
+                                                {/* Alerts Tab */}
+                                                {activeTab === 'alerts' && (
+                                                    <div>
+                                                        <h3 className="text-lg font-600 mb-3">Active Alerts</h3>
+                                                        <div className="alert-banner critical mb-3">
+                                                            <span className="alert-icon">🔴</span>
+                                                            <div style={{flex: 1}}>
+                                                                <p className="text-sm font-600">Amoxicillin 250mg - Stock critical</p>
+                                                                <p className="text-xs" style={{opacity: 0.9}}>PHC B, West District · Predicted stock-out in 2 days</p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="alert-banner mb-3">
+                                                            <span className="alert-icon">🟡</span>
+                                                            <div style={{flex: 1}}>
+                                                                <p className="text-sm font-600">Bed capacity trending up</p>
+                                                                <p className="text-xs" style={{opacity: 0.9}}>3 PHCs above 80% occupancy · Watch next 48h</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                
+                                                {/* Recommendations Tab */}
+                                                {activeTab === 'recommendations' && (
+                                                    <div>
+                                                        <h3 className="text-lg font-600 mb-3">Resource Redistribution Recommendations</h3>
+                                                        <div className="recommendation-card">
+                                                            <div className="recommendation-title">Transfer Amoxicillin from East → South</div>
+                                                            <div className="recommendation-detail">
+                                                                <strong>500 units</strong> | East District has 1,200 units in surplus stock | South District needs 600 units to avoid stock-out
+                                                            </div>
+                                                            <div style={{display: 'flex', gap: '8px'}}>
+                                                                <button className="btn btn-primary btn-sm">Approve & Dispatch</button>
+                                                                <button className="btn btn-secondary btn-sm">Review Details</button>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div className="recommendation-card">
+                                                            <div className="recommendation-title">Redistribute Beds from North → Central</div>
+                                                            <div className="recommendation-detail">
+                                                                North District has 18 available beds; Central District predicted to need 15 more beds in next 2 days
+                                                            </div>
+                                                            <div style={{display: 'flex', gap: '8px'}}>
+                                                                <button className="btn btn-primary btn-sm">Approve & Coordinate</button>
+                                                                <button className="btn btn-secondary btn-sm">Review Details</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </>
+                                        );
+                                    })()}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        
+        ReactDOM.createRoot(document.getElementById('root')).render(<SwasthyaSetu />);
+    </script>
+</body>
+</html>

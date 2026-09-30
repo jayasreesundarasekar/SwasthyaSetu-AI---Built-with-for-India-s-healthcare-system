@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwasthyaSetu AI Phase 3 - Advanced Platform</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body, #root { height: 100%; width: 100%; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #fafbfc;
+            color: #1a202c;
+            line-height: 1.6;
+        }
+        
+        :root {
+            --primary: #0F4C75;
+            --primary-dark: #0a2f52;
+            --primary-light: #1a6fa0;
+            --success: #3ECF8E;
+            --success-light: #d1fae5;
+            --warning: #F7B32B;
+            --warning-light: #fef3c7;
+            --danger: #E63946;
+            --danger-light: #fee2e2;
+            --neutral-50: #f9fafb;
+            --neutral-100: #f3f4f6;
+            --neutral-200: #e5e7eb;
+            --neutral-400: #9ca3af;
+            --neutral-600: #4b5563;
+            --neutral-800: #1f2937;
+            --neutral-900: #111827;
+        }
+        
+        .text-xs { font-size: 12px; }
+        .text-sm { font-size: 13px; }
+        .text-base { font-size: 14px; }
+        .text-lg { font-size: 16px; }
+        .text-xl { font-size: 18px; }
+        .text-2xl { font-size: 22px; }
+        .text-3xl { font-size: 28px; }
+        .font-400 { font-weight: 400; }
+        .font-500 { font-weight: 500; }
+        .font-600 { font-weight: 600; }
+        
+        .px-4 { padding-left: 16px; padding-right: 16px; }
+        .py-4 { padding-top: 16px; padding-bottom: 16px; }
+        .py-6 { padding-top: 24px; padding-bottom: 24px; }
+        .mb-2 { margin-bottom: 8px; }
+        .mb-3 { margin-bottom: 12px; }
+        .mb-4 { margin-bottom: 16px; }
+        .mb-6 { margin-bottom: 24px; }
+        .gap-2 { gap: 8px; }
+        .gap-3 { gap: 12px; }
+        .gap-4 { gap: 16px; }
+        
+        .card {
+            background: white;
+            border: 1px solid var(--neutral-200);
+            border-radius: 10px;
+            padding: 16px;
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(15, 76, 117, 0.1);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .badge-success { background: var(--success-light); color: #065f46; }
+        .badge-warning { background: var(--warning-light); color: #92400e; }
+        .badge-danger { background: var(--danger-light); color: #991b1b; }
+        
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        .btn-danger:hover { background: #c72c35; }
+        .btn-secondary {
+            background: var(--neutral-100);
+            color: var(--primary);
+            border: 1px solid var(--neutral-200);
+        }
+        .btn-secondary:hover { background: var(--neutral-200); }
+        .btn-sm { padding: 8px 12px; font-size: 12px; }
+        
+        .input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--neutral-200);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        .input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(15, 76, 117, 0.1);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--neutral-200);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            transition: width 0.6s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideInUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        @keyframes slideInLeft {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes emergencyFlash {
+            0%, 100% { background: var(--danger); }
+            50% { background: #c72c35; }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .fade-in { animation: fadeIn 0.3s ease; }
+        .slide-in-up { animation: slideInUp 0.4s ease; }
+        .pulse { animation: pulse 2s ease-in-out infinite; }
+        .slide-in-left { animation: slideInLeft 0.3s ease; }
+        .float { animation: float 3s ease-in-out infinite; }
+        
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 200px;
+            background: #f8f9fa;
+            border-right: 1px solid var(--neutral-200);
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        .sidebar-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        .sidebar-item:hover, .sidebar-item.active {
+            background: white;
+            border-left-color: var(--primary);
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: white;
+            border-bottom: 1px solid var(--neutral-200);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header.emergency {
+            background: linear-gradient(135deg, var(--danger) 0%, #c72c35 100%);
+            color: white;
+            animation: emergencyFlash 1s ease-in-out infinite;
+        }
+        .content {
+            flex: 1;
+            padding: 24px;
+        }
+        .content.emergency {
+            background: linear-gradient(135deg, rgba(230, 57, 70, 0.05) 0%, rgba(247, 179, 43, 0.05) 100%);
+        }
+        
+        .grid { display: grid; grid-gap: 16px; }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-4 { grid-template-columns: repeat(4, 1fr); }
+        
+        .stat-card {
+            background: white;
+            border: 1px solid var(--neutral-200);
+            border-radius: 10px;
+            padding: 16px;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--neutral-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+        .stat-change {
+            font-size: 12px;
+            color: var(--success);
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--neutral-200);
+            margin-bottom: 20px;
+            gap: 0;
+        }
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--neutral-600);
+        }
+        .tab:hover { color: var(--primary); }
+        .tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .alert-banner {
+            background: var(--warning-light);
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .alert-banner.critical {
+            background: var(--danger-light);
+            border-color: #fca5a5;
+        }
+        .alert-banner.emergency {
+            background: linear-gradient(135deg, var(--danger) 0%, #c72c35 100%);
+            border-color: var(--danger);
+            color: white;
+            animation: pulse 1s ease-in-out infinite;
+        }
+        .alert-icon { font-size: 18px; }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+        
+        /* Federated Learning Visualization */
+        .federated-container {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--neutral-200);
+        }
+        .federated-node {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+            color: white;
+            padding: 16px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(15, 76, 117, 0.2);
+        }
+        .federated-node:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(15, 76, 117, 0.3);
+        }
+        .federated-node.national {
+            background: linear-gradient(135deg, #1a6fa0 0%, #0F4C75 100%);
+            grid-column: 1 / -1;
+        }
+        .federated-connector {
+            text-align: center;
+            padding: 12px;
+            color: var(--neutral-600);
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        /* Emergency Resource Card */
+        .resource-card {
+            background: white;
+            border: 2px solid var(--warning);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 16px;
+            align-items: center;
+        }
+        .resource-card.critical {
+            border-color: var(--danger);
+            background: linear-gradient(135deg, rgba(230, 57, 70, 0.05) 0%, white 100%);
+        }
+        
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .modal {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Risk Matrix */
+        .risk-matrix {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .risk-cell {
+            background: white;
+            border: 1px solid var(--neutral-200);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .risk-cell:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+        .risk-cell.low { background: var(--success-light); border-color: var(--success); }
+        .risk-cell.medium { background: var(--warning-light); border-color: var(--warning); }
+        .risk-cell.high { background: var(--danger-light); border-color: var(--danger); }
+        
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .grid-3 { grid-template-columns: 1fr; }
+            .grid-4 { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        
+        // ============ PHASE 3 DATA & LOGIC ============
+        
+        const generateAdvancedPHCs = () => {
+            const districts = ['Central', 'East', 'West', 'North', 'South'];
+            const phcs = [];
+            let id = 1;
+            
+            for (let d = 0; d < districts.length; d++) {
+                for (let p = 0; p < 4; p++) {
+                    phcs.push({
+                        id: id++,
+                        name: `PHC ${String.fromCharCode(65 + p)} - ${districts[d]}`,
+                        district: districts[d],
+                        beds: 6 + Math.floor(Math.random() * 8),
+                        bedsOccupied: Math.floor((6 + Math.random() * 8) * (0.5 + Math.random() * 0.3)),
+                        medicines: {
+                            'Amoxicillin': { stock: Math.floor(100 + Math.random() * 900), consumption: 120, trend: 'up' },
+                            'Paracetamol': { stock: Math.floor(200 + Math.random() * 1000), consumption: 150, trend: 'stable' },
+                            'Metformin': { stock: Math.floor(150 + Math.random() * 700), consumption: 100, trend: 'stable' }
+                        },
+                        staff: Math.floor(3 + Math.random() * 5),
+                        footfall: Math.floor(30 + Math.random() * 70),
+                        status: Math.random() > 0.85 ? 'critical' : Math.random() > 0.70 ? 'warning' : 'available',
+                        distance: (2 + Math.random() * 8).toFixed(1),
+                        anomaly: Math.random() > 0.8 ? 'high_footfall' : null,
+                        lastUpdate: 'now'
+                    });
+                }
+            }
+            return phcs;
+        };
+        
+        // Emergency Scenarios
+        const EMERGENCY_SCENARIOS = {
+            medicine_shortage: {
+                name: 'Medicine Shortage Crisis',
+                description: 'Critical medicine stock-out detected across district',
+                color: 'danger',
+                actions: ['Request emergency supply', 'Redistribute from adjacent district', 'Activate reserve stock']
+            },
+            bed_surge: {
+                name: 'Bed Capacity Surge',
+                description: 'Patient footfall spike - bed occupancy exceeding 90%',
+                color: 'warning',
+                actions: ['Activate surge capacity', 'Divert non-critical patients', 'Request mobile beds']
+            },
+            staff_shortage: {
+                name: 'Staff Shortage Alert',
+                description: 'Critical staff unavailability reported',
+                color: 'danger',
+                actions: ['Request staff reinforcement', 'Reduce non-essential operations', 'Activate on-call staff']
+            },
+            outbreak: {
+                name: 'Outbreak Detection',
+                description: 'Unusual disease pattern detected',
+                color: 'danger',
+                actions: ['Activate isolation protocols', 'Alert health authorities', 'Increase monitoring']
+            }
+        };
+        
+        // Main App
+        function SwasthyaSetu() {
+            const [currentView, setCurrentView] = useState('overview');
+            const [emergencyMode, setEmergencyMode] = useState(false);
+            const [activeEmergency, setActiveEmergency] = useState(null);
+            const [phcs] = useState(() => generateAdvancedPHCs());
+            const [selectedDistrict, setSelectedDistrict] = useState('Central');
+            const [activeTab, setActiveTab] = useState('live');
+            const chartsRef = useRef({});
+            
+            // Render charts
+            useEffect(() => {
+                if (currentView === 'federated' && !chartsRef.current['federated-analytics']) {
+                    const ctx = document.getElementById('federated-chart');
+                    if (ctx) {
+                        chartsRef.current['federated-analytics'] = new Chart(ctx, {
+                            type: 'radar',
+                            data: {
+                                labels: ['Data Quality', 'Model Accuracy', 'Local Privacy', 'Network Speed', 'Federated Sync'],
+                                datasets: [
+                                    {
+                                        label: 'Tamil Nadu Model',
+                                        data: [92, 88, 95, 87, 90],
+                                        borderColor: '#0F4C75',
+                                        backgroundColor: 'rgba(15, 76, 117, 0.1)',
+                                        borderWidth: 2
+                                    },
+                                    {
+                                        label: 'Karnataka Model',
+                                        data: [89, 91, 93, 89, 92],
+                                        borderColor: '#3ECF8E',
+                                        backgroundColor: 'rgba(62, 207, 142, 0.1)',
+                                        borderWidth: 2
+                                    },
+                                    {
+                                        label: 'National Model',
+                                        data: [95, 94, 98, 91, 96],
+                                        borderColor: '#F7B32B',
+                                        backgroundColor: 'rgba(247, 179, 43, 0.1)',
+                                        borderWidth: 2
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { position: 'bottom' } },
+                                scales: { r: { beginAtZero: true, max: 100 } }
+                            }
+                        });
+                    }
+                }
+            }, [currentView]);
+            
+            // EMERGENCY MODE VIEW
+            if (emergencyMode) {
+                const emergency = EMERGENCY_SCENARIOS[activeEmergency];
+                const affectedPhcs = phcs.filter(p => p.district === selectedDistrict);
+                
+                return (
+                    <div className="fade-in" style={{display: 'flex', height: '100vh', background: 'white'}}>
+                        {/* Emergency Sidebar */}
+                        <div className="sidebar" style={{background: 'linear-gradient(135deg, #2d0a0a 0%, #1a0505 100%)', borderRight: '2px solid var(--danger)'}}>
+                            <div style={{padding: '16px', background: 'rgba(230, 57, 70, 0.2)', marginBottom: '16px', borderRadius: '8px'}}>
+                                <h2 className="text-lg font-600" style={{color: 'white'}}>🚨 EMERGENCY</h2>
+                                <p className="text-xs" style={{color: '#fca5a5'}}>{emergency.name}</p>
+                            </div>
+                            
+                            <p style={{padding: '16px 16px 8px', fontSize: '12px', color: '#fca5a5', textTransform: 'uppercase', fontWeight: '500'}}>Emergency Actions</p>
+                            {emergency.actions.map((action, idx) => (
+                                <div 
+                                    key={idx}
+                                    className="sidebar-item"
+                                    style={{color: '#fca5a5', borderLeft: '3px solid var(--danger)', cursor: 'pointer'}}
+                                    onClick={() => alert(`Action: ${action}`)}
+                                >
+                                    ✓ {action}
+                                </div>
+                            ))}
+                            
+                            <div style={{marginTop: 'auto', padding: '16px', borderTop: '1px solid rgba(252, 165, 165, 0.3)'}}>
+                                <button 
+                                    className="btn btn-danger" 
+                                    style={{width: '100%', fontSize: '12px', padding: '10px'}}
+                                    onClick={() => setEmergencyMode(false)}
+                                >
+                                    Exit Emergency Mode
+                                </button>
+                            </div>
+                        </div>
+                        
+                        {/* Emergency Main Content */}
+                        <div className="main-content">
+                            <div className="header emergency" style={{animation: 'emergencyFlash 1.5s ease-in-out infinite'}}>
+                                <div>
+                                    <h1 className="text-3xl font-600">⚠️ EMERGENCY COMMAND CENTER</h1>
+                                    <p className="text-sm">{selectedDistrict} District - {emergency.name}</p>
+                                </div>
+                                <div style={{fontSize: '48px', animation: 'pulse 1s ease-in-out infinite'}}>🚨</div>
+                            </div>
+                            
+                            <div className="content emergency">
+                                {/* Critical Metrics */}
+                                <div className="grid grid-4 mb-6">
+                                    <div className="stat-card" style={{borderColor: 'var(--danger)', borderWidth: '2px'}}>
+                                        <div className="stat-label" style={{color: 'var(--danger)'}}>Crisis Level</div>
+                                        <div style={{fontSize: '28px', marginBottom: '8px'}}>CRITICAL</div>
+                                        <div className="stat-change" style={{color: 'var(--danger)'}}>Immediate action required</div>
+                                    </div>
+                                    <div className="stat-card" style={{borderColor: 'var(--danger)', borderWidth: '2px'}}>
+                                        <div className="stat-label" style={{color: 'var(--danger)'}}>Affected PHCs</div>
+                                        <div className="stat-value" style={{color: 'var(--danger)'}}>
+                                            {affectedPhcs.filter(p => p.status === 'critical').length}/{affectedPhcs.length}
+                                        </div>
+                                    </div>
+                                    <div className="stat-card" style={{borderColor: 'var(--danger)', borderWidth: '2px'}}>
+                                        <div className="stat-label" style={{color: 'var(--danger)'}}>Response Time</div>
+                                        <div className="stat-value" style={{color: 'var(--danger)'}}>4 hrs</div>
+                                        <div className="stat-change" style={{color: 'var(--danger)'}}>Critical threshold</div>
+                                    </div>
+                                    <div className="stat-card" style={{borderColor: 'var(--danger)', borderWidth: '2px'}}>
+                                        <div className="stat-label" style={{color: 'var(--danger)'}}>Resources Mobilized</div>
+                                        <div className="stat-value" style={{color: 'var(--danger)'}}>23</div>
+                                        <div className="stat-change" style={{color: 'var(--danger)'}}>units en route</div>
+                                    </div>
+                                </div>
+                                
+                                {/* Emergency Resource Mobilization */}
+                                <h2 className="text-xl font-600 mb-3" style={{color: 'var(--danger)'}}>Real-Time Resource Mobilization</h2>
+                                
+                                <div className="resource-card critical">
+                                    <div>
+                                        <p className="text-sm font-600">Amoxicillin 250mg - Supply Truck</p>
+                                        <p className="text-xs text-neutral-600">From East District → Central District</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-600" style={{color: 'var(--warning)'}}>500 units</p>
+                                        <p className="text-xs text-neutral-600">ETA: 45 minutes</p>
+                                    </div>
+                                    <div>
+                                        <div className="progress-bar" style={{width: '120px', marginBottom: '4px'}}>
+                                            <div className="progress-fill" style={{width: '35%', background: 'var(--warning)'}}></div>
+                                        </div>
+                                        <p className="text-xs">35% en route</p>
+                                    </div>
+                                </div>
+                                
+                                <div className="resource-card critical">
+                                    <div>
+                                        <p className="text-sm font-600">Mobile Bed Unit - Deployment</p>
+                                        <p className="text-xs text-neutral-600">12 temporary beds + medical staff</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-600" style={{color: 'var(--danger)'}}>12 beds</p>
+                                        <p className="text-xs text-neutral-600">Activating now</p>
+                                    </div>
+                                    <div style={{display: 'flex', gap: '8px'}}>
+                                        <button className="btn btn-primary btn-sm">Confirm</button>
+                                        <button className="btn btn-secondary btn-sm">Details</button>
+                                    </div>
+                                </div>
+                                
+                                {/* Affected Facilities Real-Time */}
+                                <h2 className="text-xl font-600 mb-3 mt-6" style={{color: 'var(--danger)'}}>Affected Facilities - Live Status</h2>
+                                {affectedPhcs.map(phc => (
+                                    <div key={phc.id} className="card mb-3 slide-in-left" style={{borderLeft: `4px solid var(--danger)`}}>
+                                        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px'}}>
+                                            <div>
+                                                <h3 className="text-base font-600">{phc.name}</h3>
+                                                <p className="text-xs text-neutral-600">Updated {phc.lastUpdate}</p>
+                                            </div>
+                                            <span className="badge badge-danger">{phc.status === 'critical' ? 'CRITICAL' : 'ALERT'}</span>
+                                        </div>
+                                        <div style={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', fontSize: '12px', marginBottom: '12px'}}>
+                                            <div>
+                                                <p className="text-neutral-600">Bed Status</p>
+                                                <p className="font-600" style={{color: phc.beds - phc.bedsOccupied < 2 ? 'var(--danger)' : 'var(--warning)'}}>
+                                                    {phc.beds - phc.bedsOccupied}/{phc.beds} free
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p className="text-neutral-600">Critical Supply</p>
+                                                <p className="font-600" style={{color: 'var(--danger)'}}>42 units</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-neutral-600">Current Footfall</p>
+                                                <p className="font-600">{phc.footfall}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-neutral-600">Response Time</p>
+                                                <p className="font-600">12 min</p>
+                                            </div>
+                                        </div>
+                                        <button className="btn btn-danger btn-sm" style={{width: '100%'}}>
+                                            ACTIVATE EMERGENCY PROTOCOL
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+            
+            // NORMAL MODE - Authority Dashboard
+            return (
+                <div className="fade-in" style={{display: 'flex', height: '100vh', background: 'white'}}>
+                    {/* Sidebar */}
+                    <div className="sidebar">
+                        <div style={{padding: '16px', marginBottom: '24px', borderBottom: '1px solid var(--neutral-200)'}}>
+                            <h2 className="text-lg font-600" style={{color: 'var(--primary)'}}>SwasthyaSetu</h2>
+                            <p className="text-xs text-neutral-600">Phase 3 - Advanced</p>
+                        </div>
+                        
+                        <div 
+                            className={`sidebar-item ${currentView === 'overview' ? 'active' : ''}`}
+                            onClick={() => setCurrentView('overview')}
+                        >
+                            📊 Overview
+                        </div>
+                        <div 
+                            className={`sidebar-item ${currentView === 'federated' ? 'active' : ''}`}
+                            onClick={() => setCurrentView('federated')}
+                        >
+                            🔗 Federated AI
+                        </div>
+                        <div 
+                            className={`sidebar-item ${currentView === 'anomaly' ? 'active' : ''}`}
+                            onClick={() => setCurrentView('anomaly')}
+                        >
+                            🔍 Anomaly Detection
+                        </div>
+                        <div 
+                            className={`sidebar-item ${currentView === 'ai-copilot' ? 'active' : ''}`}
+                            onClick={() => setCurrentView('ai-copilot')}
+                        >
+                            🤖 AI Copilot
+                        </div>
+                        
+                        <p style={{padding: '16px 16px 8px', fontSize: '12px', color: 'var(--neutral-600)', textTransform: 'uppercase', fontWeight: '500'}}>Emergency Scenarios</p>
+                        {Object.keys(EMERGENCY_SCENARIOS).map(key => (
+                            <div 
+                                key={key}
+                                className="sidebar-item"
+                                onClick={() => {
+                                    setActiveEmergency(key);
+                                    setEmergencyMode(true);
+                                }}
+                                style={{cursor: 'pointer', color: 'var(--danger)'}}
+                            >
+                                {EMERGENCY_SCENARIOS[key].name.split(' ')[0]}
+                            </div>
+                        ))}
+                        
+                        <div style={{marginTop: 'auto', padding: '16px', borderTop: '1px solid var(--neutral-200)'}}>
+                            <p className="text-xs text-neutral-600 mb-2">Live Status</p>
+                            <p className="text-sm font-600" style={{color: 'var(--success)'}}>🟢 All systems nominal</p>
+                        </div>
+                    </div>
+                    
+                    {/* Main Content */}
+                    <div className="main-content">
+                        <div className="header">
+                            <div>
+                                <h1 className="text-2xl font-600">
+                                    {currentView === 'overview' && 'National Health Network'}
+                                    {currentView === 'federated' && 'Federated Learning Architecture'}
+                                    {currentView === 'anomaly' && 'Anomaly Detection System'}
+                                    {currentView === 'ai-copilot' && 'AI Health Copilot'}
+                                </h1>
+                            </div>
+                        </div>
+                        
+                        <div className="content">
+                            {/* Overview Tab */}
+                            {currentView === 'overview' && (
+                                <div className="fade-in">
+                                    <h2 className="text-lg font-600 mb-4">National Metrics & Status</h2>
+                                    <div className="grid grid-4 mb-6">
+                                        <div className="stat-card">
+                                            <div className="stat-label">Total PHCs</div>
+                                            <div className="stat-value">1,873</div>
+                                            <div className="stat-change">100% online</div>
+                                        </div>
+                                        <div className="stat-card">
+                                            <div className="stat-label">Medicine Availability</div>
+                                            <div className="stat-value">91%</div>
+                                            <div className="stat-change">↓ 2% from yesterday</div>
+                                        </div>
+                                        <div className="stat-card">
+                                            <div className="stat-label">Prediction Accuracy</div>
+                                            <div className="stat-value">94.7%</div>
+                                            <div className="stat-change">↑ 1.2% improvement</div>
+                                        </div>
+                                        <div className="stat-card">
+                                            <div className="stat-label">Anomalies Detected</div>
+                                            <div className="stat-value">7</div>
+                                            <div className="stat-change" style={{color: 'var(--warning)'}}>Needs review</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <h2 className="text-lg font-600 mb-3">Risk Assessment by District</h2>
+                                    <div className="risk-matrix">
+                                        <div className="risk-cell low">
+                                            <p className="text-sm font-600 mb-2">Central</p>
+                                            <p className="text-xs text-neutral-600">LOW RISK</p>
+                                        </div>
+                                        <div className="risk-cell low">
+                                            <p className="text-sm font-600 mb-2">East</p>
+                                            <p className="text-xs text-neutral-600">LOW RISK</p>
+                                        </div>
+                                        <div className="risk-cell medium">
+                                            <p className="text-sm font-600 mb-2">West</p>
+                                            <p className="text-xs text-neutral-600">MEDIUM RISK</p>
+                                        </div>
+                                        <div className="risk-cell medium">
+                                            <p className="text-sm font-600 mb-2">North</p>
+                                            <p className="text-xs text-neutral-600">MEDIUM RISK</p>
+                                        </div>
+                                        <div className="risk-cell high">
+                                            <p className="text-sm font-600 mb-2">South</p>
+                                            <p className="text-xs text-neutral-600">HIGH RISK</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            
+                            {/* Federated Learning */}
+                            {currentView === 'federated' && (
+                                <div className="fade-in">
+                                    <div className="federated-container mb-6">
+                                        <h2 className="text-lg font-600 mb-4">Architecture: Learn Together. Keep Data Local.</h2>
+                                        <div style={{display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '16px', marginBottom: '24px', gridAutoRows: 'minmax(80px, auto)'}}>
+                                            <div className="federated-node">
+                                                <p className="text-xs font-500">Tamil Nadu</p>
+                                                <p className="text-2xl">🏥</p>
+                                                <p className="text-xs mt-2">Local AI Model</p>
+                                            </div>
+                                            <div className="federated-node">
+                                                <p className="text-xs font-500">Karnataka</p>
+                                                <p className="text-2xl">🏥</p>
+                                                <p className="text-xs mt-2">Local AI Model</p>
+                                            </div>
+                                            <div className="federated-node national">
+                                                <p className="text-xs font-500">National Coordinator</p>
+                                                <p className="text-2xl">🇮🇳</p>
+                                                <p className="text-xs mt-2">Federated Aggregator</p>
+                                            </div>
+                                            <div className="federated-node">
+                                                <p className="text-xs font-500">Kerala</p>
+                                                <p className="text-2xl">🏥</p>
+                                                <p className="text-xs mt-2">Local AI Model</p>
+                                            </div>
+                                            <div className="federated-node">
+                                                <p className="text-xs font-500">Telangana</p>
+                                                <p className="text-2xl">🏥</p>
+                                                <p className="text-xs mt-2">Local AI Model</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <p className="text-sm text-neutral-600 mb-4">
+                                            <strong>How it works:</strong> Each state trains its own AI model on local healthcare data. Instead of centralizing sensitive data, only model updates are shared with the national coordinator. The national model learns from all states while keeping your data private and secure locally.
+                                        </p>
+                                        
+                                        <div className="chart-container">
+                                            <canvas id="federated-chart"></canvas>
+                                        </div>
+                                    </div>
+                                    
+                                    <h2 className="text-lg font-600 mb-3">Model Performance Metrics</h2>
+                                    <div className="grid grid-3">
+                                        <div className="card">
+                                            <p className="text-xs text-neutral-600 mb-2">Data Privacy Score</p>
+                                            <p className="text-2xl font-600" style={{color: 'var(--success)'}}>98.5%</p>
+                                            <p className="text-xs text-neutral-600">No centralized patient data</p>
+                                        </div>
+                                        <div className="card">
+                                            <p className="text-xs text-neutral-600 mb-2">Prediction Accuracy</p>
+                                            <p className="text-2xl font-600" style={{color: 'var(--primary)'}}>94.7%</p>
+                                            <p className="text-xs text-neutral-600">Federated ensemble model</p>
+                                        </div>
+                                        <div className="card">
+                                            <p className="text-xs text-neutral-600 mb-2">Model Update Frequency</p>
+                                            <p className="text-2xl font-600" style={{color: 'var(--warning)'}}>4h</p>
+                                            <p className="text-xs text-neutral-600">Continuous learning</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            
+                            {/* Anomaly Detection */}
+                            {currentView === 'anomaly' && (
+                                <div className="fade-in">
+                                    <h2 className="text-lg font-600 mb-4">Detected Anomalies & Pattern Analysis</h2>
+                                    {phcs.filter(p => p.anomaly).map(phc => (
+                                        <div key={phc.id} className="card mb-3 slide-in-left" style={{borderLeft: '4px solid var(--warning)'}}>
+                                            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px'}}>
+                                                <div>
+                                                    <h3 className="text-base font-600">{phc.name}</h3>
+                                                    <p className="text-xs text-neutral-600">Detected 23 minutes ago</p>
+                                                </div>
+                                                <span className="badge badge-warning">Anomaly Detected</span>
+                                            </div>
+                                            <div style={{background: 'var(--warning-light)', padding: '12px', borderRadius: '6px', marginBottom: '12px'}}>
+                                                <p className="text-sm font-500 mb-2">📊 Pattern Analysis</p>
+                                                <p className="text-xs text-neutral-700">
+                                                    {phc.anomaly === 'high_footfall' && `Footfall increased by 67% compared to 30-day average. Possible causes: local event, emergency, seasonal increase.`}
+                                                </p>
+                                            </div>
+                                            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '12px'}}>
+                                                <div>
+                                                    <p className="text-neutral-600">Confidence Score</p>
+                                                    <p className="font-600">89%</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-neutral-600">Recommended Action</p>
+                                                    <p className="font-600">Monitor closely</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                            
+                            {/* AI Copilot */}
+                            {currentView === 'ai-copilot' && (
+                                <div className="fade-in">
+                                    <h2 className="text-lg font-600 mb-4">Health Intelligence Copilot</h2>
+                                    <div className="card mb-4">
+                                        <div style={{background: 'var(--primary-light)', color: 'white', padding: '16px', borderRadius: '8px', marginBottom: '16px'}}>
+                                            <p className="text-sm font-500">Ask me anything about your healthcare network:</p>
+                                        </div>
+                                        
+                                        <div style={{display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', marginBottom: '16px'}}>
+                                            <button className="card" style={{border: '1px solid var(--neutral-200)', cursor: 'pointer', padding: '12px', textAlign: 'left', transition: 'all 0.2s'}}>
+                                                <p className="text-sm font-500">📈 "Which districts need intervention?"</p>
+                                                <p className="text-xs text-neutral-600">Get at-risk district analysis</p>
+                                            </button>
+                                            <button className="card" style={{border: '1px solid var(--neutral-200)', cursor: 'pointer', padding: '12px', textAlign: 'left', transition: 'all 0.2s'}}>
+                                                <p className="text-sm font-500">💊 "Where can we source Amoxicillin?"</p>
+                                                <p className="text-xs text-neutral-600">Find available medicine supply</p>
+                                            </button>
+                                            <button className="card" style={{border: '1px solid var(--neutral-200)', cursor: 'pointer', padding: '12px', textAlign: 'left', transition: 'all 0.2s'}}>
+                                                <p className="text-sm font-500">🚨 "What emergencies should I prepare for?"</p>
+                                                <p className="text-xs text-neutral-600">Predicted crisis scenarios</p>
+                                            </button>
+                                            <button className="card" style={{border: '1px solid var(--neutral-200)', cursor: 'pointer', padding: '12px', textAlign: 'left', transition: 'all 0.2s'}}>
+                                                <p className="text-sm font-500">🏥 "Optimize resource allocation"</p>
+                                                <p className="text-xs text-neutral-600">AI recommendations</p>
+                                            </button>
+                                        </div>
+                                        
+                                        <div style={{display: 'flex', gap: '8px'}}>
+                                            <input 
+                                                type="text" 
+                                                className="input" 
+                                                placeholder="Ask me anything..."
+                                            />
+                                            <button className="btn btn-primary">Ask</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <h2 className="text-lg font-600 mb-3">Recent Copilot Insights</h2>
+                                    <div className="card mb-3 slide-in-left">
+                                        <div style={{display: 'flex', gap: '12px', marginBottom: '12px'}}>
+                                            <p className="text-2xl">💡</p>
+                                            <div>
+                                                <p className="text-sm font-500">Medicine Trend Alert</p>
+                                                <p className="text-xs text-neutral-600">Amoxicillin consumption trending +12% week-over-week across 3 districts</p>
+                                            </div>
+                                        </div>
+                                        <div style={{background: 'var(--neutral-100)', padding: '8px 12px', borderRadius: '6px', fontSize: '12px'}}>
+                                            <p className="font-500 mb-2">Recommendation:</p>
+                                            <p>Increase Amoxicillin procurement by 15% for next month to avoid stock-out scenario</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        
+        ReactDOM.createRoot(document.getElementById('root')).render(<SwasthyaSetu />);
+    </script>
+</body>
+</html>

@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwasthyaSetu AI - Find Care. Predict Need. Save Lives.</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #f9fafb;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        
+        .status-available { color: #3ECF8E; }
+        .status-attention { color: #F7B32B; }
+        .status-warning { color: #E63946; }
+        .status-critical { color: #E63946; }
+        
+        .badge-green { background: #D1FAE5; color: #065F46; }
+        .badge-amber { background: #FEF3C7; color: #92400E; }
+        .badge-red { background: #FEE2E2; color: #991B1B; }
+        .badge-blue { background: #DBEAFE; color: #1E40AF; }
+        
+        .card-hover { transition: transform 0.2s, box-shadow 0.2s; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        
+        .fade-in { animation: fadeIn 0.4s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .slide-in { animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .pulse-counter { font-variant-numeric: tabular-nums; }
+        
+        .india-map {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            margin: 0 auto;
+        }
+        
+        .map-node {
+            fill: #3ECF8E;
+            opacity: 0.8;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .map-node:hover { opacity: 1; }
+        .map-node.warning { fill: #F7B32B; }
+        .map-node.critical { fill: #E63946; }
+        
+        .heatmap-cell {
+            transition: opacity 0.2s;
+            cursor: pointer;
+        }
+        .heatmap-cell:hover { opacity: 0.9; }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #E5E7EB;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3ECF8E, #0F4C75);
+            transition: width 0.6s ease;
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #E5E7EB;
+            padding: 8px 0;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            z-index: 40;
+        }
+        
+        .nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 8px;
+            font-size: 11px;
+            cursor: pointer;
+            color: #9CA3AF;
+            border: none;
+            background: none;
+            transition: color 0.2s;
+        }
+        .nav-btn.active { color: #0F4C75; }
+        .nav-btn:hover { color: #3ECF8E; }
+        
+        .app-container {
+            padding-bottom: 80px;
+        }
+        
+        .stat-number {
+            font-size: 28px;
+            font-weight: 600;
+            color: #0F4C75;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #9CA3AF;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #0F4C75;
+            box-shadow: 0 0 0 3px rgba(15, 76, 117, 0.1);
+        }
+        
+        .button-primary {
+            background: #0F4C75;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .button-primary:hover { background: #0A2F52; }
+        .button-primary:active { transform: scale(0.98); }
+        
+        .button-secondary {
+            background: white;
+            color: #0F4C75;
+            padding: 12px 24px;
+            border: 1px solid #0F4C75;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .button-secondary:hover { background: #F0F9FF; }
+        
+        .facility-card {
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .facility-card:hover {
+            border-color: #0F4C75;
+            box-shadow: 0 4px 12px rgba(15, 76, 117, 0.1);
+        }
+        
+        .medicine-result {
+            background: white;
+            border-left: 4px solid #3ECF8E;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-bubble {
+            margin-bottom: 12px;
+            display: flex;
+            gap: 8px;
+            animation: slideIn 0.3s ease-out;
+        }
+        .chat-bubble.user { justify-content: flex-end; }
+        .chat-bubble.assistant { justify-content: flex-start; }
+        
+        .chat-message {
+            max-width: 75%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .chat-message.user {
+            background: #0F4C75;
+            color: white;
+        }
+        .chat-message.assistant {
+            background: #F3F4F6;
+            color: #1F2937;
+        }
+        
+        .chat-input-group {
+            display: flex;
+            gap: 8px;
+        }
+        .chat-input-group input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #E5E7EB;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+        .chat-input-group button {
+            background: #0F4C75;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .timestamp {
+            font-size: 11px;
+            color: #9CA3AF;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #1F2937;
+        }
+        
+        .section-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #6B7280;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        
+        @media (max-width: 640px) {
+            .stat-number { font-size: 24px; }
+            .section-title { font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        
+        // Mock Data
+        const mockPHCs = [
+            { id: 1, name: 'Government PHC', district: 'Central', beds: 8, medicines: 'Available', staff: 'Available', footfall: 'Low', distance: 3.2, lat: 19.0760, lon: 72.8777, status: 'available' },
+            { id: 2, name: 'Community Health Center', district: 'West', beds: 12, medicines: 'Available', staff: 'Available', footfall: 'Medium', distance: 5.1, lat: 19.0595, lon: 72.8295, status: 'available' },
+            { id: 3, name: 'Rural Health Post', district: 'East', beds: 4, medicines: 'Low Stock', staff: 'Limited', footfall: 'Low', distance: 8.4, lat: 19.1136, lon: 72.8697, status: 'attention' },
+            { id: 4, name: 'District Hospital', district: 'North', beds: 6, medicines: 'Available', staff: 'Available', footfall: 'High', distance: 2.8, lat: 19.1357, lon: 72.8627, status: 'available' },
+            { id: 5, name: 'Mobile Health Unit', district: 'South', beds: 2, medicines: 'Critical', staff: 'Critical', footfall: 'Medium', distance: 6.7, lat: 18.9676, lon: 72.8194, status: 'critical' },
+        ];
+        
+        const mockMedicines = [
+            { id: 1, name: 'Paracetamol 500mg', phcs: [1, 2, 4], stock: 'Available', low: false },
+            { id: 2, name: 'Amoxicillin 250mg', phcs: [1, 3, 4], stock: 'Available', low: true },
+            { id: 3, name: 'Ibuprofen 400mg', phcs: [2, 4], stock: 'Low Stock', low: true },
+            { id: 4, name: 'Aspirin 75mg', phcs: [1, 2, 3, 4], stock: 'Available', low: false },
+            { id: 5, name: 'Metformin 500mg', phcs: [1, 4], stock: 'Available', low: false },
+        ];
+        
+        const districtStats = {
+            phcs: 24,
+            beds: 186,
+            medicines: 87,
+            staff: 92,
+            status: 'STABLE'
+        };
+        
+        const nationalStats = {
+            phcs: 1873,
+            beds: 15420,
+            medicines: 91,
+            staff: 94,
+            supplies: 86,
+            districts: 28,
+            alerts: 7,
+            critical: 2
+        };
+        
+        // App Component
+        function SwasthyaSetu() {
+            const [currentView, setCurrentView] = useState('home');
+            const [searchQuery, setSearchQuery] = useState('');
+            const [medicineQuery, setMedicineQuery] = useState('');
+            const [messages, setMessages] = useState([{ type: 'assistant', text: 'Hi! I\'m HealthGrid AI. You can ask me where to find care, medicines, or check facility status near you. What do you need?' }]);
+            const [chatInput, setChatInput] = useState('');
+            const messagesEndRef = useRef(null);
+            
+            const scrollToBottom = () => {
+                messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+            };
+            
+            useEffect(() => {
+                scrollToBottom();
+            }, [messages]);
+            
+            const handleSearch = (query) => {
+                if (!query.trim()) return;
+                const results = mockPHCs.filter(phc => 
+                    phc.name.toLowerCase().includes(query.toLowerCase()) ||
+                    phc.district.toLowerCase().includes(query.toLowerCase())
+                );
+                // Could show results - for now just transition
+                setSearchQuery(query);
+            };
+            
+            const handleMedicineSearch = (query) => {
+                if (!query.trim()) return;
+                setMedicineQuery(query);
+            };
+            
+            const handleChatSend = () => {
+                if (!chatInput.trim()) return;
+                
+                const userMsg = chatInput.trim();
+                setMessages(prev => [...prev, { type: 'user', text: userMsg }]);
+                
+                // Simulate AI response
+                let response = '';
+                if (userMsg.toLowerCase().includes('medicine') || userMsg.toLowerCase().includes('paracetamol')) {
+                    response = 'I found Paracetamol 500mg at 3 nearby facilities. PHC A is closest (2.4 km, available) and PHC B (4.1 km, available). Would you like directions?';
+                } else if (userMsg.toLowerCase().includes('bed')) {
+                    response = 'Government PHC has 8 beds available (current footfall: low). Community Health Center has 12 beds (medium footfall). Both are within 6 km.';
+                } else if (userMsg.toLowerCase().includes('alert') || userMsg.toLowerCase().includes('emergency')) {
+                    response = '✓ Your district healthcare network is stable. 1 facility needs attention (low medicine stock). No critical alerts.';
+                } else if (userMsg.toLowerCase().includes('healthcare') || userMsg.toLowerCase().includes('phc')) {
+                    response = 'I found 4 operational facilities near you. The closest is Government PHC (3.2 km, all resources available, low footfall). Would you like more details?';
+                } else {
+                    response = 'I can help you find healthcare facilities, medicines, check bed availability, view alerts, and more. What would you like to know?';
+                }
+                
+                setTimeout(() => {
+                    setMessages(prev => [...prev, { type: 'assistant', text: response }]);
+                }, 300);
+                
+                setChatInput('');
+            };
+            
+            return (
+                <div className="app-container">
+                    {/* Home / Landing */}
+                    {currentView === 'home' && (
+                        <div className="fade-in">
+                            {/* Hero */}
+                            <div className="bg-gradient-to-br from-slate-900 to-blue-900 text-white pt-12 pb-16 px-6 text-center">
+                                <div className="mb-8">
+                                    <div className="text-xs font-semibold tracking-wide text-blue-200 mb-2">INDIA'S HEALTH NETWORK</div>
+                                    <h1 className="text-3xl font-bold mb-2">SwasthyaSetu AI</h1>
+                                    <p className="text-sm text-blue-100">Find Care. Predict Need. Save Lives.</p>
+                                </div>
+                                
+                                {/* Animated India Map SVG */}
+                                <svg className="india-map mb-8" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+                                    {/* Simplified India outline */}
+                                    <path d="M150,80 L200,70 L220,90 L210,120 L230,140 L220,160 L240,180 L230,210 L250,230 L240,260 L220,280 L210,310 L190,330 L170,340 L150,350 L140,330 L130,310 L120,290 L110,270 L100,250 L90,230 L85,210 L80,190 L75,170 L70,150 L65,130 L70,110 L85,90 L110,85 L140,80" 
+                                          fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2"/>
+                                    
+                                    {/* PHC nodes */}
+                                    <circle cx="160" cy="120" r="6" className="map-node" />
+                                    <circle cx="190" cy="100" r="6" className="map-node warning" />
+                                    <circle cx="210" cy="150" r="6" className="map-node" />
+                                    <circle cx="170" cy="200" r="6" className="map-node" />
+                                    <circle cx="140" cy="250" r="6" className="map-node critical" />
+                                    <circle cx="190" cy="280" r="6" className="map-node" />
+                                    <circle cx="220" cy="230" r="6" className="map-node" />
+                                    <circle cx="150" cy="320" r="6" className="map-node" />
+                                    
+                                    {/* Connection lines */}
+                                    <line x1="160" y1="120" x2="190" y2="100" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
+                                    <line x1="190" y1="100" x2="210" y2="150" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
+                                    <line x1="210" y1="150" x2="170" y2="200" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
+                                </svg>
+                                
+                                {/* CTA Buttons */}
+                                <div className="space-y-3">
+                                    <button 
+                                        onClick={() => setCurrentView('find')}
+                                        className="button-primary w-full">
+                                        Find Healthcare Near Me
+                                    </button>
+                                    <button 
+                                        onClick={() => setCurrentView('pulse')}
+                                        className="button-secondary w-full">
+                                        Explore Health Network
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            {/* Live Stats */}
+                            <div className="px-6 py-8 bg-white">
+                                <div className="grid grid-cols-2 gap-4 mb-6">
+                                    <div>
+                                        <div className="stat-number">{nationalStats.phcs.toLocaleString()}</div>
+                                        <div className="stat-label">PHCs Connected</div>
+                                    </div>
+                                    <div>
+                                        <div className="stat-number">{nationalStats.beds.toLocaleString()}</div>
+                                        <div className="stat-label">Beds Available</div>
+                                    </div>
+                                    <div>
+                                        <div className="stat-number">{nationalStats.medicines}%</div>
+                                        <div className="stat-label">Medicines Stocked</div>
+                                    </div>
+                                    <div>
+                                        <div className="stat-number">{nationalStats.staff}%</div>
+                                        <div className="stat-label">Staff Available</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    
+                    {/* Find Care */}
+                    {currentView === 'find' && (
+                        <div className="fade-in px-6 py-6">
+                            <h1 className="section-title mb-6">Find Healthcare Near You</h1>
+                            
+                            <input 
+                                type="text"
+                                placeholder="Search PHC or facility..."
+                                className="search-input mb-6"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onKeyPress={(e) => e.key === 'Enter' && handleSearch(searchQuery)}
+                            />
+                            
+                            {/* Results */}
+                            {searchQuery && (
+                                <div className="space-y-3 mb-6">
+                                    {mockPHCs.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase())).map(phc => (
+                                        <div key={phc.id} className="facility-card slide-in">
+                                            <div className="flex justify-between items-start mb-2">
+                                                <div>
+                                                    <h3 className="font-semibold text-14px">{phc.name}</h3>
+                                                    <p className="text-xs text-gray-500">{phc.district} • {phc.distance} km</p>
+                                                </div>
+                                                <span className={`text-xs font-semibold px-2 py-1 rounded badge-${phc.status === 'available' ? 'green' : phc.status === 'attention' ? 'amber' : 'red'}`}>
+                                                    {phc.status === 'available' ? '🟢' : phc.status === 'attention' ? '🟡' : '🔴'}
+                                                </span>
+                                            </div>
+                                            <div className="grid grid-cols-3 gap-2 text-xs mb-3">
+                                                <div>
+                                                    <div className="text-gray-600">Beds</div>
+                                                    <div className="font-semibold">{phc.beds}</div>
+                                                </div>
+                                                <div>
+                                                    <div className="text-gray-600">Medicines</div>
+                                                    <div className="font-semibold status-available">{phc.medicines}</div>
+                                                </div>
+                                                <div>
+                                                    <div className="text-gray-600">Staff</div>
+                                                    <div className="font-semibold status-available">{phc.staff}</div>
+                                                </div>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <button className="button-primary text-xs flex-1">Directions</button>
+                                                <button className="button-secondary text-xs flex-1">Details</button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                            
+                            {!searchQuery && (
+                                <div className="space-y-3">
+                                    <p className="text-sm text-gray-500 mb-4">Popular searches:</p>
+                                    {mockPHCs.slice(0, 4).map(phc => (
+                                        <div key={phc.id} className="facility-card">
+                                            <div className="flex justify-between items-center cursor-pointer hover:text-blue-600">
+                                                <div>
+                                                    <h3 className="font-semibold text-sm">{phc.name}</h3>
+                                                    <p className="text-xs text-gray-500">{phc.distance} km away</p>
+                                                </div>
+                                                <span className="text-gray-400">→</span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+                    
+                    {/* Medicine Finder */}
+                    {currentView === 'medicine' && (
+                        <div className="fade-in px-6 py-6">
+                            <h1 className="section-title mb-6">Find a Medicine</h1>
+                            
+                            <input 
+                                type="text"
+                                placeholder="Enter medicine name..."
+                                className="search-input mb-6"
+                                value={medicineQuery}
+                                onChange={(e) => setMedicineQuery(e.target.value)}
+                                onKeyPress={(e) => e.key === 'Enter' && handleMedicineSearch(medicineQuery)}
+                            />
+                            
+                            {medicineQuery && (
+                                <div className="space-y-2 mb-6">
+                                    {mockMedicines.filter(m => m.name.toLowerCase().includes(medicineQuery.toLowerCase())).map(med => (
+                                        <div key={med.id}>
+                                            <div className="text-sm font-semibold mb-3">{med.name}</div>
+                                            {mockPHCs.filter(p => med.phcs.includes(p.id)).map(phc => (
+                                                <div key={phc.id} className="medicine-result slide-in">
+                                                    <div className="flex-1">
+                                                        <div className="font-semibold text-sm">{phc.name}</div>
+                                                        <div className="text-xs text-gray-500">{phc.distance} km</div>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <div className={`text-xs font-semibold mb-1 ${med.low ? 'status-warning' : 'status-available'}`}>
+                                                            {med.stock}
+                                                        </div>
+                                                        <button className="button-primary text-xs">Get Directions</button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                            
+                            {!medicineQuery && (
+                                <div className="space-y-3">
+                                    <p className="text-sm text-gray-500 mb-4">Common medicines:</p>
+                                    {mockMedicines.map(med => (
+                                        <div 
+                                            key={med.id}
+                                            onClick={() => setMedicineQuery(med.name)}
+                                            className="facility-card cursor-pointer"
+                                        >
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-sm">{med.name}</span>
+                                                <span className={`text-xs font-semibold px-2 py-1 rounded ${med.low ? 'badge-amber' : 'badge-green'}`}>
+                                                    {med.stock}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+                    
+                    {/* Health Pulse */}
+                    {currentView === 'pulse' && (
+                        <div className="fade-in px-6 py-6">
+                            <div className="mb-6">
+                                <div className="text-xs font-semibold text-gray-500 mb-1 tracking-wide">NATIONAL OVERVIEW</div>
+                                <h1 className="text-3xl font-bold">Health Pulse</h1>
+                                <p className="text-xs text-gray-500 mt-1">🇮🇳 India's public healthcare network</p>
+                            </div>
+                            
+                            {/* Status Indicator */}
+                            <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                                <div className="text-xs font-semibold text-green-700 tracking-wide mb-1">STATUS</div>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-2xl">🟢</span>
+                                    <span className="font-semibold">Healthcare Network Stable</span>
+                                </div>
+                            </div>
+                            
+                            {/* Capacity Metrics */}
+                            <div className="space-y-4 mb-6">
+                                <div>
+                                    <div className="flex justify-between mb-2">
+                                        <span className="text-sm font-semibold">Medicine Availability</span>
+                                        <span className="text-sm font-bold text-blue-600">{nationalStats.medicines}%</span>
+                                    </div>
+                                    <div className="progress-bar">
+                                        <div className="progress-fill" style={{width: `${nationalStats.medicines}%`}}></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div className="flex justify-between mb-2">
+                                        <span className="text-sm font-semibold">Bed Availability</span>
+                                        <span className="text-sm font-bold text-blue-600">82%</span>
+                                    </div>
+                                    <div className="progress-bar">
+                                        <div className="progress-fill" style={{width: '82%'}}></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div className="flex justify-between mb-2">
+                                        <span className="text-sm font-semibold">Workforce Availability</span>
+                                        <span className="text-sm font-bold text-blue-600">{nationalStats.staff}%</span>
+                                    </div>
+                                    <div className="progress-bar">
+                                        <div className="progress-fill" style={{width: `${nationalStats.staff}%`}}></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div className="flex justify-between mb-2">
+                                        <span className="text-sm font-semibold">Essential Supplies</span>
+                                        <span className="text-sm font-bold text-blue-600">{nationalStats.supplies}%</span>
+                                    </div>
+                                    <div className="progress-bar">
+                                        <div className="progress-fill" style={{width: `${nationalStats.supplies}%`}}></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {/* Network Stats */}
+                            <div className="grid grid-cols-2 gap-3 bg-white border border-gray-200 rounded-lg p-4">
+                                <div>
+                                    <div className="stat-label">Monitored</div>
+                                    <div className="stat-number">{nationalStats.districts}</div>
+                                    <div className="text-xs text-gray-500">States</div>
+                                </div>
+                                <div>
+                                    <div className="stat-label">Connected</div>
+                                    <div className="stat-number">{nationalStats.phcs}</div>
+                                    <div className="text-xs text-gray-500">Facilities</div>
+                                </div>
+                                <div>
+                                    <div className="stat-label">Active Alerts</div>
+                                    <div className="stat-number">{nationalStats.alerts}</div>
+                                    <div className="text-xs text-gray-500">Warnings</div>
+                                </div>
+                                <div>
+                                    <div className="stat-label">Critical</div>
+                                    <div className="stat-number">{nationalStats.critical}</div>
+                                    <div className="text-xs text-gray-500">Facilities</div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    
+                    {/* AI Assistant */}
+                    {currentView === 'ai' && (
+                        <div className="fade-in px-6 py-6 flex flex-col" style={{height: 'calc(100vh - 100px)'}}>
+                            <h1 className="section-title mb-4">HealthGrid AI</h1>
+                            
+                            {/* Chat History */}
+                            <div className="flex-1 overflow-y-auto mb-4 bg-white rounded-lg p-4">
+                                {messages.map((msg, idx) => (
+                                    <div key={idx} className="chat-bubble">
+                                        <div className={`chat-message ${msg.type}`}>
+                                            {msg.text}
+                                        </div>
+                                    </div>
+                                ))}
+                                <div ref={messagesEndRef} />
+                            </div>
+                            
+                            {/* Input */}
+                            <div className="chat-input-group">
+                                <input 
+                                    type="text"
+                                    placeholder="Ask me anything..."
+                                    value={chatInput}
+                                    onChange={(e) => setChatInput(e.target.value)}
+                                    onKeyPress={(e) => e.key === 'Enter' && handleChatSend()}
+                                />
+                                <button onClick={handleChatSend}>Send</button>
+                            </div>
+                        </div>
+                    )}
+                    
+                    {/* Bottom Navigation */}
+                    <div className="bottom-nav">
+                        <button className={`nav-btn ${currentView === 'home' ? 'active' : ''}`} onClick={() => setCurrentView('home')}>
+                            <span>🏠</span>
+                            <span>Home</span>
+                        </button>
+                        <button className={`nav-btn ${currentView === 'find' ? 'active' : ''}`} onClick={() => setCurrentView('find')}>
+                            <span>🗺️</span>
+                            <span>Find Care</span>
+                        </button>
+                        <button className={`nav-btn ${currentView === 'medicine' ? 'active' : ''}`} onClick={() => setCurrentView('medicine')}>
+                            <span>💊</span>
+                            <span>Medicines</span>
+                        </button>
+                        <button className={`nav-btn ${currentView === 'pulse' ? 'active' : ''}`} onClick={() => setCurrentView('pulse')}>
+                            <span>📊</span>
+                            <span>Pulse</span>
+                        </button>
+                        <button className={`nav-btn ${currentView === 'ai' ? 'active' : ''}`} onClick={() => setCurrentView('ai')}>
+                            <span>🤖</span>
+                            <span>AI</span>
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+        
+        // Render
+        ReactDOM.createRoot(document.getElementById('root')).render(<SwasthyaSetu />);
+    </script>
+</body>
+</html>

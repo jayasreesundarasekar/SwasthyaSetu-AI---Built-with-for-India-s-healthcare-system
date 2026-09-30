@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwasthyaSetu - National Health Mission Control</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body, #root { height: 100%; width: 100%; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #fff;
+            overflow: hidden;
+        }
+        
+        :root {
+            --primary: #0F4C75;
+            --primary-light: #1a6fa0;
+            --success: #3ECF8E;
+            --warning: #F7B32B;
+            --danger: #E63946;
+        }
+        
+        .mission-control {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            gap: 16px;
+        }
+        
+        .mc-header {
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        
+        .mc-title {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1a6fa0, #3ECF8E);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 4px;
+        }
+        
+        .mc-subtitle {
+            font-size: 13px;
+            color: #9ca3af;
+        }
+        
+        .mc-controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .time-toggle {
+            display: flex;
+            gap: 6px;
+            background: rgba(15, 76, 117, 0.2);
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid rgba(15, 76, 117, 0.3);
+        }
+        
+        .time-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            background: transparent;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .time-btn.active {
+            background: var(--primary-light);
+            color: white;
+        }
+        
+        .time-btn:hover {
+            color: var(--primary-light);
+        }
+        
+        .scenario-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .scenario-btn {
+            padding: 8px 14px;
+            border: 1px solid rgba(15, 76, 117, 0.3);
+            border-radius: 6px;
+            background: rgba(15, 76, 117, 0.1);
+            color: var(--primary-light);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .scenario-btn:hover {
+            background: rgba(15, 76, 117, 0.2);
+            border-color: var(--primary-light);
+        }
+        
+        .mc-main {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 16px;
+            min-height: 0;
+        }
+        
+        .map-panel {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(15, 76, 117, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .map-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary-light);
+        }
+        
+        .map-visualization {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(10, 14, 39, 0.5);
+            border-radius: 8px;
+            border: 1px solid rgba(15, 76, 117, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .india-map {
+            width: 90%;
+            height: 90%;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .phc-node {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .phc-node:hover {
+            transform: scale(1.3);
+            border-color: white;
+            box-shadow: 0 0 20px currentColor;
+        }
+        
+        .status-green {
+            background: #3ECF8E;
+            color: white;
+        }
+        
+        .status-yellow {
+            background: #F7B32B;
+            color: #1a202c;
+        }
+        
+        .status-orange {
+            background: #fd7e14;
+            color: white;
+        }
+        
+        .status-red {
+            background: #E63946;
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(230, 57, 70, 0.7); }
+            50% { box-shadow: 0 0 0 6px rgba(230, 57, 70, 0); }
+        }
+        
+        .stats-row {
+            display: flex;
+            gap: 8px;
+            justify-content: space-around;
+            padding: 12px;
+            background: rgba(15, 76, 117, 0.1);
+            border-radius: 6px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .stat-number {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-light);
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-top: 2px;
+        }
+        
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-height: 0;
+        }
+        
+        .panel {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(15, 76, 117, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .panel-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary-light);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .alert-item {
+            background: rgba(230, 57, 70, 0.1);
+            border-left: 3px solid var(--danger);
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+        
+        .alert-location {
+            font-weight: 600;
+            color: var(--danger);
+            margin-bottom: 2px;
+        }
+        
+        .alert-issue {
+            color: #d1d5db;
+            font-size: 11px;
+        }
+        
+        .recommendation {
+            background: rgba(26, 111, 160, 0.1);
+            border-left: 3px solid var(--primary-light);
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+        
+        .rec-title {
+            font-weight: 600;
+            color: var(--primary-light);
+            margin-bottom: 6px;
+        }
+        
+        .rec-details {
+            color: #d1d5db;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+        
+        .rec-why {
+            background: rgba(15, 76, 117, 0.1);
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 8px;
+            font-size: 11px;
+            color: #9ca3af;
+            border-left: 2px solid var(--primary-light);
+        }
+        
+        .impact-section {
+            background: rgba(62, 207, 142, 0.05);
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(62, 207, 142, 0.2);
+            margin-top: 10px;
+        }
+        
+        .impact-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 11px;
+            border-bottom: 1px solid rgba(62, 207, 142, 0.1);
+        }
+        
+        .impact-row:last-child {
+            border-bottom: none;
+        }
+        
+        .metric-label {
+            color: #9ca3af;
+        }
+        
+        .metric-before {
+            color: #E63946;
+        }
+        
+        .metric-after {
+            color: #3ECF8E;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+        }
+        
+        .btn-simulate {
+            background: rgba(79, 70, 229, 0.3);
+            color: #a78bfa;
+            border: 1px solid rgba(79, 70, 229, 0.5);
+        }
+        
+        .btn-simulate:hover {
+            background: rgba(79, 70, 229, 0.4);
+        }
+        
+        .btn-approve {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-approve:hover {
+            background: #2db873;
+        }
+        
+        .btn-review {
+            background: var(--warning);
+            color: #1a202c;
+        }
+        
+        .btn-review:hover {
+            background: #f7a01a;
+        }
+        
+        .decision-trace {
+            background: rgba(15, 76, 117, 0.1);
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 8px;
+            font-size: 10px;
+            color: #9ca3af;
+        }
+        
+        .trace-item {
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(15, 76, 117, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .trace-item:last-child {
+            border-bottom: none;
+        }
+        
+        .trace-check {
+            color: #3ECF8E;
+            font-weight: bold;
+        }
+        
+        .approval-status {
+            background: rgba(62, 207, 142, 0.1);
+            border: 1px solid rgba(62, 207, 142, 0.3);
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-top: 8px;
+            color: #9ca3af;
+        }
+        
+        .approval-status.approved {
+            background: rgba(62, 207, 142, 0.1);
+            border-color: rgba(62, 207, 142, 0.3);
+            color: #3ECF8E;
+        }
+        
+        .approval-status.pending {
+            background: rgba(247, 179, 43, 0.1);
+            border-color: rgba(247, 179, 43, 0.3);
+            color: #F7B32B;
+        }
+        
+        .forecast-indicator {
+            font-size: 11px;
+            color: #9ca3af;
+            padding: 6px;
+            background: rgba(15, 76, 117, 0.1);
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+        
+        .scenario-active {
+            background: rgba(230, 57, 70, 0.2);
+            border: 1px solid var(--danger);
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        
+        function MissionControl() {
+            const [timeHorizon, setTimeHorizon] = useState('NOW');
+            const [activeScenario, setActiveScenario] = useState(null);
+            const [networkState, setNetworkState] = useState('normal');
+            const [selectedRecommendation, setSelectedRecommendation] = useState(null);
+            const [approvalStatus, setApprovalStatus] = useState('pending');
+            
+            // Simulate scenario response
+            const scenarios = {
+                'surge': {
+                    name: '📈 50% Patient Surge',
+                    description: 'Simulate sudden 50% increase in patient footfall',
+                    effect: 'HIGH_DEMAND',
+                    impacts: {
+                        critical: 8,
+                        warning: 24,
+                        stable: 48
+                    }
+                },
+                'supply': {
+                    name: '⚠️ Supply Disruption',
+                    description: 'Simulate major supply chain disruption',
+                    effect: 'SUPPLY_SHOCK',
+                    impacts: {
+                        critical: 14,
+                        warning: 31,
+                        stable: 35
+                    }
+                },
+                'shortage': {
+                    name: '💊 Medicine Shortage',
+                    description: 'Simulate critical medicine shortage in region',
+                    effect: 'MEDICINE_CRISIS',
+                    impacts: {
+                        critical: 6,
+                        warning: 19,
+                        stable: 55
+                    }
+                },
+                'emergency': {
+                    name: '🚨 Regional Emergency',
+                    description: 'Simulate major regional health emergency',
+                    effect: 'EMERGENCY_MODE',
+                    impacts: {
+                        critical: 12,
+                        warning: 28,
+                        stable: 40
+                    }
+                }
+            };
+            
+            const triggerScenario = (scenario) => {
+                setActiveScenario(scenario);
+                setNetworkState('alert');
+                setSelectedRecommendation(null);
+                setApprovalStatus('pending');
+            };
+            
+            const recommendations = {
+                'surge': {
+                    title: 'Emergency Resource Redistribution',
+                    transfer: 'Transfer 2,400 units of critical medicines from surplus districts to affected areas',
+                    allocation: 'Divert 180 beds from 6 low-pressure PHCs to 4 high-surge facilities',
+                    reasoning: 'Current demand forecast (NOW): 65% occupancy. With +50% surge: 97% occupancy (critical threshold 85%). Redistribution reduces peak to 78%.',
+                    affects: '14 PHCs',
+                    impact: {
+                        metric1: ['Stock-out risk', '78%', '12%'],
+                        metric2: ['Facilities at-risk', '14', '3'],
+                        metric3: ['Projected shortage', '6 days', '18 days'],
+                        metric4: ['Network stability', '🔴 Critical', '🟡 Alert']
+                    }
+                },
+                'supply': {
+                    title: 'Alternative Supply Route Activation',
+                    transfer: 'Reroute 1,800 units via Tamil Nadu → Karnataka backup corridor',
+                    allocation: 'Mobilize emergency reserves from 3 state stockpiles',
+                    reasoning: 'Primary supply route disrupted. System identifies affected districts (8 critical). Activates backup supply routes with 4-6 hour delay vs 48-hour wait for normal replenishment.',
+                    affects: '8 PHCs (direct), 24 PHCs (secondary)',
+                    impact: {
+                        metric1: ['Delivery delay', '48 hours', '4-6 hours'],
+                        metric2: ['Facilities affected', '24', '8'],
+                        metric3: ['Stock risk', '94%', '23%'],
+                        metric4: ['Supply resilience', '🔴 Failed', '🟡 Resilient']
+                    }
+                },
+                'shortage': {
+                    title: 'Predictive Medicine Redistribution',
+                    transfer: 'Transfer 3,200 units of shortage medicine from 9 surplus districts',
+                    allocation: 'Pre-position 40% of supply closer to demand hotspots',
+                    reasoning: 'Medicine shortage detected in 6 PHCs (1.5 days of supply). AI model identifies 9 districts with 3+ days buffer. Recommends staged transfers to prevent cascade shortage.',
+                    affects: '15 PHCs (supply chain)',
+                    impact: {
+                        metric1: ['Coverage gap', '45%', '8%'],
+                        metric2: ['Emergency transfers', '9', '1'],
+                        metric3: ['Patient impact', '3,200', '200'],
+                        metric4: ['Medicine resilience', '🔴 Critical', '🟢 Stable']
+                    }
+                },
+                'emergency': {
+                    title: 'Full Network Surge Response',
+                    transfer: 'Mobilize all available resources to emergency zone (12 PHCs)',
+                    allocation: 'Activate surge staffing, redirect 25% of regional capacity',
+                    reasoning: 'Regional emergency detected. System identifies critical cluster (12 PHCs, ~1,500 beds). Coordinates with 8 nearby districts to loan beds, medicines, and staff for 72-hour emergency period.',
+                    affects: '12 PHCs (direct), 31 PHCs (indirect support)',
+                    impact: {
+                        metric1: ['Emergency beds activated', '0', '180'],
+                        metric2: ['Critical response time', '3-4 hours', '12 minutes'],
+                        metric3: ['Network strain', '🔴 Overload', '🟡 Managed'],
+                        metric4: ['Regional resilience', '🔴 Failing', '🟢 Supported']
+                    }
+                }
+            };
+            
+            const currentRec = recommendations[activeScenario];
+            
+            const getImpacts = () => {
+                if (!activeScenario) {
+                    return { critical: 2, warning: 8, stable: 80 };
+                }
+                return scenarios[activeScenario].impacts;
+            };
+            
+            const impacts = getImpacts();
+            
+            return (
+                <div className="mission-control">
+                    {/* Header */}
+                    <div className="mc-header">
+                        <div className="mc-title">🇮🇳 SWASTHYASETU</div>
+                        <div className="mc-subtitle">NATIONAL HEALTH MISSION CONTROL</div>
+                    </div>
+                    
+                    {/* Controls */}
+                    <div className="mc-controls">
+                        <div className="time-toggle">
+                            {['NOW', '+24H', '+48H', '+72H'].map(time => (
+                                <button 
+                                    key={time}
+                                    className={`time-btn ${timeHorizon === time ? 'active' : ''}`}
+                                    onClick={() => setTimeHorizon(time)}
+                                >
+                                    {time}
+                                </button>
+                            ))}
+                        </div>
+                        
+                        <div className="scenario-buttons">
+                            <span style={{fontSize: '12px', color: '#9ca3af', alignSelf: 'center'}}>Scenario:</span>
+                            {Object.entries(scenarios).map(([key, scenario]) => (
+                                <button 
+                                    key={key}
+                                    className={`scenario-btn ${activeScenario === key ? 'scenario-active' : ''}`}
+                                    onClick={() => triggerScenario(key)}
+                                >
+                                    {scenario.name}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                    
+                    {/* Main Content */}
+                    <div className="mc-main">
+                        {/* Left: Map & Stats */}
+                        <div className="map-panel">
+                            <div className="map-title">
+                                📍 LIVE NETWORK STATE - {timeHorizon}
+                                {activeScenario && <span style={{marginLeft: '8px', color: 'var(--danger)'}}>🚨 SCENARIO ACTIVE</span>}
+                            </div>
+                            
+                            <div className="map-visualization">
+                                <div className="india-map">
+                                    {Array.from({length: 80}).map((_, idx) => {
+                                        let statusClass = 'status-green';
+                                        if (activeScenario) {
+                                            const rand = Math.random();
+                                            if (rand < impacts.critical / 80) statusClass = 'status-red';
+                                            else if (rand < (impacts.critical + impacts.warning) / 80) statusClass = 'status-orange';
+                                            else if (rand < 0.4) statusClass = 'status-yellow';
+                                        } else {
+                                            const rand = Math.random();
+                                            if (rand > 0.95) statusClass = 'status-yellow';
+                                            if (rand > 0.98) statusClass = 'status-orange';
+                                        }
+                                        return (
+                                            <div key={idx} className={`phc-node ${statusClass}`}>
+                                                •
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                            
+                            <div className="stats-row">
+                                <div className="stat-item">
+                                    <div className="stat-number" style={{color: '#E63946'}}>{impacts.critical}</div>
+                                    <div className="stat-label">Critical</div>
+                                </div>
+                                <div className="stat-item">
+                                    <div className="stat-number" style={{color: '#F7B32B'}}>{impacts.warning}</div>
+                                    <div className="stat-label">Warning</div>
+                                </div>
+                                <div className="stat-item">
+                                    <div className="stat-number" style={{color: '#3ECF8E'}}>{impacts.stable}</div>
+                                    <div className="stat-label">Stable</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {/* Right: AI Recommendation & Decision */}
+                        <div className="side-panel">
+                            {/* Critical Alerts */}
+                            <div className="panel">
+                                <div className="panel-title">🚨 CRITICAL ALERTS</div>
+                                {activeScenario ? (
+                                    <div>
+                                        <div className="alert-item">
+                                            <div className="alert-location">{scenarios[activeScenario].name}</div>
+                                            <div className="alert-issue">{scenarios[activeScenario].description}</div>
+                                        </div>
+                                        {impacts.critical > 0 && (
+                                            <div className="alert-item">
+                                                <div className="alert-location">⚠️ {impacts.critical} PHCs in Critical State</div>
+                                                <div className="alert-issue">Network requires immediate resource redistribution</div>
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div style={{fontSize: '12px', color: '#9ca3af'}}>✓ Network operating normally. Select a scenario to test system response.</div>
+                                )}
+                            </div>
+                            
+                            {/* AI Recommendation */}
+                            {activeScenario && currentRec && (
+                                <div className="panel">
+                                    <div className="panel-title">🤖 AI RECOMMENDATION</div>
+                                    <div className="recommendation">
+                                        <div className="rec-title">{currentRec.title}</div>
+                                        <div className="rec-details">
+                                            <strong>Transfer:</strong> {currentRec.transfer}<br/>
+                                            <strong>Allocation:</strong> {currentRec.allocation}
+                                        </div>
+                                        <div className="rec-why">
+                                            <strong>Why:</strong> {currentRec.reasoning}
+                                        </div>
+                                        
+                                        {/* Impact Projection */}
+                                        <div className="impact-section">
+                                            <div style={{fontSize: '11px', fontWeight: '600', color: '#3ECF8E', marginBottom: '6px'}}>📊 PROJECTED IMPACT</div>
+                                            {Object.entries(currentRec.impact).map(([key, [label, before, after]], idx) => (
+                                                <div key={idx} className="impact-row">
+                                                    <span className="metric-label">{label}</span>
+                                                    <span><span className="metric-before">{before}</span> → <span className="metric-after">{after}</span></span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        
+                                        {/* Decision Trace */}
+                                        <div className="decision-trace">
+                                            <div style={{marginBottom: '4px', fontWeight: '600', color: 'var(--primary-light)'}}>AI Decision Trace:</div>
+                                            <div className="trace-item"><span className="trace-check">✓</span> Analyzed {currentRec.affects} demand forecast</div>
+                                            <div className="trace-item"><span className="trace-check">✓</span> Identified surplus inventory in 9 districts</div>
+                                            <div className="trace-item"><span className="trace-check">✓</span> Calculated minimal-distance routes</div>
+                                            <div className="trace-item"><span className="trace-check">✓</span> Verified safety stock requirements</div>
+                                            <div className="trace-item"><span className="trace-check">✓</span> Simulated impact on 40 facilities</div>
+                                        </div>
+                                        
+                                        {/* Approval Status */}
+                                        <div className={`approval-status ${approvalStatus}`}>
+                                            {approvalStatus === 'pending' ? '⏳ Awaiting Human Review & Approval' : '✓ Approved - Executing Transfer'}
+                                        </div>
+                                        
+                                        {/* Action Buttons */}
+                                        <div className="action-buttons">
+                                            <button className="btn btn-simulate" onClick={() => alert('Simulating response...\n\nSystem executes redistribution.\nNetwork status improves to ' + (impacts.critical > 5 ? 'ALERT (🟡)' : 'STABLE (🟢)'))}>
+                                                ⚡ SIMULATE
+                                            </button>
+                                            <button 
+                                                className="btn btn-review" 
+                                                onClick={() => alert('Opening detailed review screen...\n\nRecommendation Details:\n' + currentRec.transfer + '\n\nScope: ' + currentRec.affects)}
+                                            >
+                                                👁️ REVIEW
+                                            </button>
+                                            <button 
+                                                className="btn btn-approve"
+                                                onClick={() => setApprovalStatus('approved')}
+                                                disabled={approvalStatus === 'approved'}
+                                            >
+                                                ✓ APPROVE
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            
+                            {/* Forecast Note */}
+                            <div className="forecast-indicator">
+                                📈 View toggled to <strong>{timeHorizon}</strong> forecast. Network status changes based on predicted demand and supply constraints.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        
+        ReactDOM.createRoot(document.getElementById('root')).render(<MissionControl />);
+    </script>
+</body>
+</html>
