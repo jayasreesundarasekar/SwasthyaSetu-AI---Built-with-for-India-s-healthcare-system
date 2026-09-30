@@ -1,401 +1,845 @@
-# SwasthyaSetu AI — Complete Healthcare Platform Package
+# 🏥 SwasthyaSetu AI
 
-**Version:** 5.0 Complete Edition  
-**Build Date:** September 29, 2026  
-**Status:** Production Ready ✅
+### **AI-Powered Public Healthcare Resource Intelligence & Emergency Coordination Platform**
+
+> **Predict shortages. Optimize resources. Coordinate healthcare networks before crises become emergencies.**
+
+SwasthyaSetu is an AI-driven healthcare infrastructure intelligence platform designed to help **Public Health Centres (PHCs), district authorities, state health departments, and emergency coordinators** make faster, data-driven decisions about medicines, patient demand, healthcare capacity, and emergency resource allocation.
+
+Instead of treating every PHC as an isolated facility, SwasthyaSetu creates a **connected intelligence layer across the healthcare network** — continuously analyzing inventory, patient footfall, demand patterns, facility capacity, and operational signals to identify emerging risks and recommend coordinated interventions.
 
 ---
 
-## 📦 Package Contents
+## 🚨 The Problem
 
-This is the **complete, integrated SwasthyaSetu platform** with all 5 phases + Mission Control + 18 features.
+Public healthcare systems operate as interconnected networks, but critical operational information is often fragmented across individual facilities and administrative levels.
 
+A PHC may have:
+
+* Excess medicine stock while another facility is approaching a shortage
+* Increasing patient footfall without corresponding resource planning
+* Staff or bed capacity under pressure
+* Demand patterns that indicate an upcoming shortage
+* Emergency conditions requiring rapid redistribution of resources
+
+Traditional systems often answer:
+
+> **"What is happening now?"**
+
+SwasthyaSetu is designed to additionally answer:
+
+> **"What is likely to happen next, where is the risk emerging, and what coordinated action can reduce it?"**
+
+---
+
+# 💡 Our Solution
+
+SwasthyaSetu transforms fragmented healthcare operations into a **predictive, network-level decision-support system**.
+
+```text
+                 HEALTHCARE NETWORK
+                        │
+        ┌───────────────┼────────────────┐
+        ↓               ↓                ↓
+     PHC Data       Patient Data      Inventory
+        │               │                │
+        └───────────────┼────────────────┘
+                        ↓
+                🧠 AI / ML ENGINE
+                        │
+        ┌───────────────┼────────────────┐
+        ↓               ↓                ↓
+   Forecasting      Anomalies       Optimization
+        │               │                │
+        └───────────────┼────────────────┘
+                        ↓
+             🚨 EARLY RISK DETECTION
+                        ↓
+             🤖 AI RECOMMENDATIONS
+                        ↓
+             👤 HUMAN APPROVAL
+                        ↓
+             📋 AUDITABLE ACTION
 ```
-swasthyasetu-complete/
-├── 📄 README.md (this file)
-├── 📄 SWASTHYASETU_MASTER_INDEX.md (navigation guide)
-│
-├── 🎯 LIVE INTERFACES (HTML - Open in Browser)
-│   ├── swasthyasetu_complete_platform.html ⭐ (ALL-IN-ONE)
-│   ├── swasthyasetu_mission_control.html (Judges Demo)
-│   ├── swasthyasetu_phase1.html (Citizen App)
-│   ├── swasthyasetu_phase2.html (Authority Dashboard)
-│   ├── swasthyasetu_phase3_enhanced.html (Emergency Response)
-│   ├── swasthyasetu_phase4_mobile.html (Mobile App)
-│   ├── swasthyasetu_phase4_dashboard_customization.html (Dashboard Custom)
-│   ├── swasthyasetu_phase5_wow_factor.html (Intelligence Layer)
-│   └── swasthyasetu_hackathon_pitch.html (Pitch Deck)
-│
-├── 📚 DOCUMENTATION (Markdown)
-│   ├── swasthyasetu_complete_ecosystem.md (15 features explained)
-│   ├── swasthyasetu_system_architecture.md (tech stack + deployment)
-│   ├── swasthyasetu_demo_presenter_guide.md (judge talking points)
-│   ├── swasthyasetu_phase5_feature_guide.md (feature details)
-│   └── swasthyasetu_api_specification.md (20+ endpoints)
-│
-└── 📋 THIS FILE + Master Index
+
+The platform combines **predictive analytics, anomaly detection, constrained resource optimization, scenario simulation, role-based workflows, and explainable AI recommendations** into one healthcare intelligence platform.
+
+---
+
+# ✨ Key Features
+
+## 🧠 1. AI Resource Orchestrator
+
+SwasthyaSetu identifies mismatches between **available resources and predicted demand** across PHCs.
+
+The system can identify situations such as:
+
+```text
+PHC A → Medicine surplus
+PHC B → Predicted shortage
+
+             ↓
+
+      AI Recommendation
+
+Transfer available stock from
+PHC A → PHC B
+
+while maintaining safety-stock
+constraints at PHC A.
+```
+
+The optimization process considers:
+
+* Current inventory
+* Predicted demand
+* Safety-stock requirements
+* Facility priority
+* Distance / transportation burden
+* Transfer limits
+* Stock-out risk
+
+The objective is to improve network resilience while avoiding unnecessary movement of resources.
+
+---
+
+## 📈 2. AI Demand Forecasting
+
+Historical patient and medicine consumption patterns are analyzed to estimate future demand.
+
+The platform includes an **ARIMA-style forecasting model** incorporating:
+
+* Historical demand
+* Trend
+* Variability
+* Seasonal patterns
+
+Forecasts can be used to identify potential future resource pressure before a shortage occurs.
+
+```text
+Historical Demand
+       ↓
+Trend Analysis
+       ↓
+Seasonality
+       ↓
+Forecasting Model
+       ↓
+Future Demand
+       ↓
+Stock Risk Analysis
 ```
 
 ---
 
-## 🚀 Quick Start (Choose Your Path)
+## 🚨 3. Early Shortage & Risk Detection
 
-### For Judges (10 minutes)
-1. **Open:** `swasthyasetu_mission_control.html`
-2. **Read:** `swasthyasetu_demo_presenter_guide.md` (FAQ section)
-3. **Click:** Test all 4 scenarios (surge, supply, shortage, emergency)
-4. **Understand:** How AI recommends, humans approve, impact is quantified
+SwasthyaSetu continuously evaluates operational signals to identify unusual patterns.
 
-### For Investors (30 minutes)
-1. **Open:** `swasthyasetu_hackathon_pitch.html` (12 slides, 8-minute pitch)
-2. **Read:** `swasthyasetu_complete_ecosystem.md` (business model section)
-3. **Review:** `SWASTHYASETU_MASTER_INDEX.md` (key metrics + success criteria)
-4. **Ask:** Schedule 20-minute follow-up call with team
+The anomaly detection layer combines statistical techniques including:
 
-### For Engineers (1-2 hours)
-1. **Open:** `swasthyasetu_complete_platform.html` (interactive all-in-one)
-2. **Read:** `swasthyasetu_system_architecture.md` (data flow, ML pipeline, API)
-3. **Review:** `swasthyasetu_api_specification.md` (20+ endpoints, webhooks)
-4. **Inspect:** Individual phase HTMLs to understand React component patterns
-5. **Setup:** Clone repo, install dependencies, connect to Google Cloud
+* Z-score analysis
+* Interquartile range analysis
+* Trend deviation
+* Combined anomaly scoring
 
-### For Government Officials (45 minutes)
-1. **Open:** `swasthyasetu_mission_control.html`
-2. **Read:** `swasthyasetu_demo_presenter_guide.md` (FAQ: privacy, compliance, safety)
-3. **Review:** `swasthyasetu_system_architecture.md` (compliance section)
-4. **Decide:** Pilot with 50 PHCs or full district deployment
-
-### For PHC Staff (20 minutes)
-1. **Open:** `swasthyasetu_phase4_mobile.html` (what you'll use daily)
-2. **Read:** `swasthyasetu_phase5_feature_guide.md` (plain-language explanations)
-3. **Try:** Navigate through workflows, export data, check medicine status
+This allows the system to flag abnormal changes in healthcare demand or resource availability.
 
 ---
 
-## ✨ What's Included
+## 🔮 4. 72-Hour Future Network View
 
-### 8 Interactive Interfaces
-All run in browser. No installation needed. No login required for demo.
+Instead of displaying only the current state of the healthcare network, SwasthyaSetu provides a **future-oriented view**.
 
-| Interface | Purpose | Users | Runtime |
-|-----------|---------|-------|---------|
-| **Complete Platform** | All-in-one navigation + all features | Everyone | 5-30 min |
-| **Mission Control** | Live network + scenarios + recommendations (JUDGES) | Judges/Execs | 10 min |
-| **Citizen App** | Public-facing: find care, check meds, health info | 2M patients | 5-15 min |
-| **Authority Dashboard** | Real-time oversight, demand forecast, approvals | Admins | 10 min |
-| **Emergency Response** | Crisis coordination, federated learning, anomalies | State teams | 15 min |
-| **Mobile App** | 5-language field app with offline sync | PHC staff | 10 min |
-| **Dashboard Custom** | Per-role widget configuration, export scheduling | IT admins | 10 min |
-| **Intelligence Layer** | Digital Twin, What-If, Root Cause, Learning | Advanced users | 20 min |
-| **Pitch Deck** | 12-slide investor presentation | Investors | 8 min |
+Authorities can examine projected network conditions across:
 
-### 6 Documentation Files
-Deep dives into features, architecture, business model, and deployment.
+* **NOW**
+* **+24 hours**
+* **+48 hours**
+* **+72 hours**
 
-| Document | Topics | Read Time | Audience |
-|----------|--------|-----------|----------|
-| **Complete Ecosystem** | 18 features + revenue model + metrics | 20 min | PMs, Investors |
-| **System Architecture** | Data flow, ML pipeline, compliance, scaling | 30 min | Engineers, CTO |
-| **Demo Guide** | Talking points, script, FAQ for judges | 15 min | **JUDGES** |
-| **Phase 5 Guide** | 15 features explained in plain language | 20 min | Non-tech |
-| **API Spec** | 20+ endpoints, RBAC, webhooks, examples | 25 min | Backend eng |
-| **Master Index** | Navigation, metrics, success criteria | 10 min | Everyone |
-
-### 18 Features (All Integrated)
-
-**7 Priority Features:**
-- 🤖 AI Resource Orchestrator
-- 🔮 72-Hour Future View
-- 🧪 Emergency Scenario Lab
-- 🚚 Supply-Chain Failure Simulator
-- 📈 Before/After Impact Projection
-- 🧵 AI Decision Trace
-- ✅ Human-in-the-Loop Approval
-
-**8 Supporting Features:**
-- 🔐 Federated Learning Privacy Vault
-- 🌐 National Health Digital Twin
-- 🤔 One-Click Explain
-- 📊 Resource Stress Index (0-100 gauge)
-- 🏥 PHC Health Scorecard (6 metrics)
-- ⏱️ Medicine Expiry Radar
-- 👩‍⚕️ Workforce Pressure Map
-- 📈 AI Confidence + Data Quality Scoring
-
-**3 System Features:**
-- 🌦️ External Signal Layer (framework)
-- 👥 Patient Footfall Heatmap
-- 🔄 Closed-Loop Learning
+This allows emerging pressure points to be identified before they become critical.
 
 ---
 
-## 🎯 Key Metrics (What Success Looks Like)
+## 🧪 5. Emergency Scenario Lab
 
-| Metric | Baseline | SwasthyaSetu | Impact |
-|--------|----------|--------------|--------|
-| Emergency response time | 48 hours | 4 minutes | **720x faster** |
-| Forecast accuracy | N/A | 92% | Predictive planning possible |
-| Medicine availability | 65% | 89% | +37% patient access |
-| Supply chain wastage | ₹500Cr/year | ₹80Cr/year | **₹420Cr saved/year** |
-| PHCs coordinated | 0 (silos) | 426+ | Unified network |
-| Patient impact (12 mo) | 0 | 400K | **Lives saved** |
+Healthcare authorities can simulate potential disruptions and immediately observe their projected network impact.
 
----
+Supported scenarios include:
 
-## 💼 Business Model (TL;DR)
+### 📈 Patient Demand Surge
 
-**Revenue:** ₹50/PHC/month (SaaS)  
-**TAM:** $500M (India + SE Asia + Africa)  
-**Break-even:** 400 PHCs (18 months)  
-**Seed Ask:** ₹2.5 Cr (USD $300K)  
-**18-Month Target:** ₹25L/month MRR (profitable)  
-**2-Year Vision:** 1,500 PHCs across 3 states
+Simulates a sudden increase in patient footfall.
 
----
+### ⚠️ Supply Disruption
 
-## 🔒 Security & Compliance
+Simulates failure or disruption in the healthcare supply chain.
 
-✅ **Data Privacy:** Federated learning (no data centralization)  
-✅ **Encryption:** TLS 1.3 + AES-256 at rest  
-✅ **Access Control:** OAuth 2.0 + RBAC (5 roles)  
-✅ **Audit Logging:** All actions tracked + immutable  
-✅ **Compliance:** ISO 27001, HIPAA-equivalent, India DPA-ready  
-✅ **Uptime:** 99.95% SLA (production)
+### 💊 Medicine Shortage
 
----
+Simulates inventory depletion and identifies facilities at risk.
 
-## 🛠️ Technology Stack
+### 🚨 Regional Emergency
 
-**Frontend:** React 18 (CDN), Chart.js 4.4, Vanilla CSS  
-**Backend:** Node.js (Google Cloud Run, stateless)  
-**Database:** BigQuery (analytics), Firestore (real-time)  
-**ML/AI:** Vertex AI, TensorFlow, TensorFlow Federated, OR-Tools  
-**Infrastructure:** Google Cloud (India region)  
-**Authentication:** OAuth 2.0, mTLS  
+Simulates a compound healthcare emergency affecting multiple facilities.
 
-**No external dependencies.** All HTML files self-contained. Open in modern browser.
+The simulation workflow:
+
+```text
+Scenario Trigger
+      ↓
+Network State Changes
+      ↓
+AI Detects Risk
+      ↓
+AI Generates Recommendation
+      ↓
+Projected Impact
+      ↓
+Human Review
+      ↓
+Approve / Reject
+```
 
 ---
 
-## 📖 How to Use This Package
+# 🚚 6. Supply-Chain Failure Simulation
 
-### Option 1: Demo (No Setup Required)
-1. Extract ZIP file
-2. Open any `.html` file in Chrome, Firefox, or Safari
-3. Interact with live interfaces
-4. Read markdown files for deeper understanding
-5. **Ready in 2 minutes**
+SwasthyaSetu models healthcare resource movement across the network.
 
-### Option 2: Deploy to Web (15 minutes)
-1. Upload HTML files to web server (any static hosting)
-2. Share URLs with judges/investors
-3. No backend needed for demos
-4. Works on mobile (responsive design)
+When a supply route becomes unavailable, the system can evaluate alternative resource paths and identify potential contingency transfers.
 
-### Option 3: Production Setup (Google Cloud)
-1. Follow `swasthyasetu_system_architecture.md` deployment section
-2. Connect to real PHC data (BigQuery)
-3. Deploy API (Cloud Run)
-4. Configure Vertex AI models
-5. **2-week setup + pilot**
+This provides authorities with a way to explore:
+
+* Affected facilities
+* Resources at risk
+* Alternative routes
+* Potential redistribution
+* Projected impact
 
 ---
 
-## 🎬 Demo Scenarios (Try These)
+# 📊 7. Before vs After AI Impact Analysis
 
-### Mission Control Demo (10 minutes)
-1. Open `swasthyasetu_mission_control.html`
-2. Toggle time horizons: NOW → +24H → +48H
-3. Click "📈 Demand Surge" scenario
-4. Read the AI recommendation
-5. See impact projection (78% → 12% stock-out risk)
-6. Click "✓ APPROVE"
-7. **Judges understand system end-to-end in 10 minutes**
+Recommendations are accompanied by projected impact analysis.
 
-### Complete Platform Demo (30 minutes)
-1. Open `swasthyasetu_complete_platform.html`
-2. Navigate through all 6 phases using header buttons
-3. Test each scenario in Mission Control
-4. Review Authority Dashboard district performance
-5. Check Mobile App workflows
-6. Explore Intelligence Layer features
-7. **Full system understanding in 30 minutes**
+The platform can compare:
 
-### Investor Pitch (10 minutes)
-1. Open `swasthyasetu_hackathon_pitch.html`
-2. Slide through 12-slide deck (click arrows)
-3. Read talking points in `swasthyasetu_demo_presenter_guide.md`
-4. **Investors see problem → solution → traction → ask**
+```text
+WITHOUT INTERVENTION
+        VS
+WITH AI-RECOMMENDED INTERVENTION
+```
+
+Example metrics include:
+
+* Projected stock-out risk
+* Facilities at risk
+* Resource availability
+* Inventory imbalance
+* Shortage window
+* Network resilience
+
+> **Important:** Scenario outputs are explicitly treated as projections/simulations rather than real-world guarantees.
 
 ---
 
-## ❓ FAQ
+# 🔍 8. Explainable AI Decision Trace
 
-### Q: Do I need to install anything?
-**A:** No. Everything runs in browser. Open HTML files directly.
+SwasthyaSetu does not simply provide an AI recommendation.
 
-### Q: Can I modify the code?
-**A:** Yes. All HTML/CSS/JS is standard. Edit directly in text editor, refresh browser.
+It also provides a reasoning trail explaining **why the recommendation was generated**.
 
-### Q: How do I connect to real data?
-**A:** See `swasthyasetu_system_architecture.md` → Deployment section. Requires Google Cloud setup.
+Example:
 
-### Q: Is this production-ready?
-**A:** Yes for demo/pilot. For national scale, requires backend + data integration (2-week setup).
+```text
+✓ Demand forecast indicates increasing requirement
+✓ Receiving PHC projected to fall below safety threshold
+✓ Nearby PHC has available surplus
+✓ Source PHC remains above safety-stock level
+✓ Transfer satisfies distance and quantity constraints
+```
 
-### Q: What's the difference between the interfaces?
-**A:** See `SWASTHYASETU_MASTER_INDEX.md` → "Layer-by-Layer Integration" section.
-
-### Q: Can I show this to government?
-**A:** Yes. Compliance roadmap in `swasthyasetu_system_architecture.md` addresses privacy, security, auditability.
-
-### Q: How many PHCs can this handle?
-**A:** Demo: simulates 80 PHCs. Production: scales to 10,000+ PHCs with Google Cloud.
-
-### Q: What if a scenario button doesn't work?
-**A:** Refresh browser. Check console (F12) for errors. All interfaces tested on modern browsers.
+This makes recommendations easier for healthcare administrators to review and validate.
 
 ---
 
-## 📞 Support
+# 👤 9. Human-in-the-Loop Safety
 
-### For Technical Questions
-- Read: `swasthyasetu_system_architecture.md`
-- Read: `swasthyasetu_api_specification.md`
-- Check: `SWASTHYASETU_MASTER_INDEX.md` → Appendix
+SwasthyaSetu is designed as a **decision-support system, not an autonomous healthcare authority**.
 
-### For Business Questions
-- Read: `swasthyasetu_complete_ecosystem.md` → Business Model
-- Read: `swasthyasetu_hackathon_pitch.html`
-- Check: `SWASTHYASETU_MASTER_INDEX.md` → Business Model Quick Summary
+AI:
 
-### For Demo/Presentation
-- Read: `swasthyasetu_demo_presenter_guide.md`
-- Practice: 5 times before showing judges
-- Memorize: FAQ section for tough questions
+* Detects
+* Predicts
+* Analyzes
+* Recommends
+* Explains
 
-### For Government/Ministry
-- Contact: team@swasthyasetu.health
-- Schedule: 45-minute overview with compliance briefing
-- Propose: 3-month pilot (50 PHCs, free during pilot)
+Humans:
 
-### For Investors
-- Pitch: 10-minute deck first
-- Deep Dive: 30-minute business/tech deep dive
-- Traction: Share pilot results (3-6 months in)
+* Review
+* Approve
+* Reject
+* Execute
+* Take accountability
 
----
+```text
+AI DETECTS
+     ↓
+AI EXPLAINS
+     ↓
+HUMAN REVIEWS
+     ↓
+HUMAN APPROVES / REJECTS
+     ↓
+SYSTEM RECORDS ACTION
+```
 
-## ✅ Verification Checklist
-
-Before presenting to judges/investors, verify:
-
-- [ ] All HTML files open in browser (no errors)
-- [ ] Mission Control scenarios trigger correctly
-- [ ] All 4 scenario buttons work (surge, supply, shortage, emergency)
-- [ ] Decision trace and impact projection display
-- [ ] Approval workflow buttons are clickable
-- [ ] Complete Platform navigation works (all 6 phases)
-- [ ] Markdown files readable in editor
-- [ ] Master Index provides clear navigation
-
-**Expected time to verify:** 5 minutes
+AI recommendations do **not** automatically execute resource transfers.
 
 ---
 
-## 🚀 Next Steps
+# 🛡️ 10. Role-Based Healthcare Governance
 
-### Immediate (This Week)
-- [ ] Extract and test all files
-- [ ] Practice Mission Control demo (5 times)
-- [ ] Memorize presenter guide talking points
-- [ ] Present to judges (get feedback)
+The platform supports multiple operational roles:
 
-### Short-Term (Next 4 Weeks)
-- [ ] Contact Maharashtra Health Ministry
-- [ ] Propose 50-PHC free pilot
-- [ ] Identify pilot PHCs (diverse regions)
-- [ ] Collect investor interest
+| Role                | Purpose                                                   |
+| ------------------- | --------------------------------------------------------- |
+| PHC Staff           | Manage facility-level information and resource requests   |
+| District Admin      | Monitor and coordinate district-level operations          |
+| State Director      | Monitor state-wide network conditions and approve actions |
+| Federal Coordinator | Higher-level network coordination                         |
+| Analytics Viewer    | Access analytical insights                                |
 
-### Medium-Term (Months 2-4)
-- [ ] Execute pilot (real PHCs)
-- [ ] Achieve 92% forecast accuracy
-- [ ] Document case studies
-- [ ] Prepare Series A pitch
-
-### Long-Term (Months 6-18)
-- [ ] Scale to 400 PHCs (Maharashtra full)
-- [ ] Expand to 3 states (KA, TN, MH)
-- [ ] Hit ₹25L/month MRR
-- [ ] Launch Series A (₹50-100Cr ask)
+Access is protected using **JWT authentication and role-based access control (RBAC).**
 
 ---
 
-## 📊 Success Criteria
+# 📋 11. Complete Audit Trail
 
-**You've succeeded when:**
+Healthcare resource decisions require accountability.
 
-- ✅ Judges vote for your project (top 20, then winners)
-- ✅ Investor requests follow-up call
-- ✅ Government official schedules MOU discussion
-- ✅ Pilot PHCs agree to participate
-- ✅ Forecast achieves 92%+ accuracy
-- ✅ Response time hits 4 minutes
-- ✅ Staff adoption reaches 95%
-- ✅ First ₹2.5Cr check clears
+SwasthyaSetu records operational actions through an audit system containing information such as:
 
----
+* User
+* Action
+* Resource
+* Timestamp
+* Change information
+* Approval information
+* Request status
 
-## 📜 License & Attribution
+This creates a traceable chain from:
 
-**SwasthyaSetu AI** — India's National Healthcare Intelligence Platform
-
-Built for:
-- Judges (hackathon)
-- Investors (VC funding)
-- Government (national scale)
-- Patients (life-saving care)
-
-**Use this freely.** Share with stakeholders. Deploy to cloud. Scale nationally.
+**AI Recommendation → Human Decision → System Action**
 
 ---
 
-## 🙏 Final Thought
+# 🏥 12. Network-Level Healthcare Intelligence
 
-You're not just running software. You're launching a movement.
+Instead of focusing on one facility at a time, SwasthyaSetu models healthcare as a connected network.
 
-426 fragmented PHCs → 1 intelligent network.  
-48-hour delays → 4-minute response.  
-Preventable deaths → Lives saved.
+The platform brings together:
 
-The complete platform is ready. The business model is clear. The impact is measurable.
+* PHC availability
+* Medicine inventory
+* Patient footfall
+* Demand forecasts
+* Facility capacity
+* Resource transfers
+* Emergency events
+* Recommendations
+* Operational workflows
 
-Go change healthcare in India. 🚀
-
----
-
-**Built with ❤️ for India's health system**  
-**Version 5.0 Complete | September 29, 2026**  
-**Ready to Deploy ✅**
-
-**Questions?** Start with `SWASTHYASETU_MASTER_INDEX.md` → "Navigation Quick Links"
+This enables authorities to reason about **system-wide resource distribution rather than isolated facility conditions.**
 
 ---
 
-## Version History
+# 🧠 AI / ML Architecture
 
-- **v5.0 Complete** (Sep 29, 2026) ← **YOU ARE HERE**
-  - All 5 phases integrated
-  - Mission Control added (judges' demo)
-  - 18 features implemented
-  - 6 documentation files
-  - System architecture defined
-  - API specification documented
-  - Business model validated
-  - Ready for hackathon + pilot
-  
-- Previous versions (v1-v4) in transcript archive
+SwasthyaSetu uses multiple analytical components.
+
+### Demand Forecasting
+
+```text
+Historical Data
+      ↓
+Trend + Variability
+      ↓
+ARIMA-style Forecast
+      ↓
+Future Demand
+```
+
+### Anomaly Detection
+
+```text
+Operational Data
+      ↓
+Z-Score
+      +
+IQR
+      +
+Trend Deviation
+      ↓
+Anomaly Score
+      ↓
+Risk Flag
+```
+
+### Resource Optimization
+
+```text
+Supply
+  +
+Demand
+  +
+Safety Stock
+  +
+Distance
+  +
+Facility Priority
+       ↓
+Constrained Optimization
+       ↓
+Transfer Recommendation
+```
 
 ---
 
-**End of README. Go build. Go win. Go scale. 🎯**
+# 🏗️ System Architecture
+
+```text
+┌───────────────────────────────────────────────┐
+│                 USER INTERFACE                │
+│                                               │
+│ Citizen / PHC / District / State Authorities │
+└──────────────────────┬────────────────────────┘
+                       │
+                       ↓
+┌───────────────────────────────────────────────┐
+│             SWASTHYASETU PLATFORM             │
+│                                               │
+│ Dashboards • Mission Control • Simulations   │
+│ Forecasts • Alerts • Recommendations          │
+└──────────────────────┬────────────────────────┘
+                       │
+                       ↓
+┌───────────────────────────────────────────────┐
+│                 REST API LAYER                │
+│                                               │
+│ Authentication • RBAC • Validation • Logging │
+└──────────────────────┬────────────────────────┘
+                       │
+              ┌────────┴────────┐
+              ↓                 ↓
+┌─────────────────────┐ ┌──────────────────────┐
+│   AI / ML ENGINE    │ │     DATABASE         │
+│                     │ │                      │
+│ Forecasting         │ │ PHCs                 │
+│ Anomaly Detection   │ │ Medicines            │
+│ Optimization        │ │ Inventory            │
+│ Scenario Analysis   │ │ Patient Footfall     │
+└─────────────────────┘ │ Forecasts            │
+                        │ Workflows            │
+                        │ Audit Logs            │
+                        └──────────────────────┘
+```
+
+---
+
+# 🛠️ Technology Stack
+
+### Frontend
+
+* HTML5
+* CSS3
+* JavaScript
+* Chart.js
+* Responsive dashboard interfaces
+* Interactive Mission Control interface
+
+### Backend
+
+* Node.js
+* Express.js
+* REST APIs
+* JWT Authentication
+* Role-Based Access Control
+* Input validation
+* Audit logging
+
+### Data & Database
+
+* SQLite for development/demo
+* PostgreSQL support for production
+* Redis support in the deployment architecture
+
+### AI / Analytics
+
+* ARIMA-style demand forecasting
+* Statistical anomaly detection
+* Constrained resource optimization
+* Scenario simulation
+* Network risk analysis
+
+### DevOps
+
+* Docker
+* Docker Compose
+* Nginx
+* Production deployment architecture
+* Health checks and monitoring
+
+### Testing
+
+* Jest
+* Automated backend tests
+* API validation
+
+---
+
+# 📊 Platform Architecture at a Glance
+
+| Layer              | Capability                                         |
+| ------------------ | -------------------------------------------------- |
+| Experience Layer   | Dashboards, Mission Control, responsive interfaces |
+| Intelligence Layer | Forecasting, anomaly detection, optimization       |
+| Simulation Layer   | Emergency and supply-chain scenarios               |
+| Decision Layer     | AI recommendations + explainable decision traces   |
+| Governance Layer   | Human approval + RBAC + audit logs                 |
+| Data Layer         | PHC, inventory, demand, patient and workflow data  |
+| API Layer          | Secure REST APIs                                   |
+
+---
+
+# 🗄️ Data Model
+
+The backend maintains structured healthcare operational data including:
+
+* Users
+* PHCs
+* Medicines
+* PHC Inventory
+* Patient Footfall
+* Demand Forecasts
+* Workflow Requests
+* Audit Logs
+* Emergency Events
+* AI Recommendations
+
+The database architecture is designed to support relationships between **facilities, resources, demand, predictions, and decisions.**
+
+---
+
+# 🔐 Security & Governance
+
+SwasthyaSetu incorporates several safeguards appropriate for a healthcare decision-support environment:
+
+* JWT-based authentication
+* Role-based access control
+* Input validation
+* SQL injection protection
+* Audit logging
+* Rate limiting
+* Security middleware
+* Human approval workflows
+* Decision traceability
+* Explicit separation between AI recommendation and human authorization
+
+---
+
+# 🚀 Quick Start
+
+## Frontend Demo
+
+The frontend interfaces are self-contained HTML applications.
+
+Open the desired interface directly in a browser:
+
+```bash
+cd swasthyasetu_complete/Frontend
+```
+
+For the main hackathon demonstration, use:
+
+```text
+swasthyasetu_mission_control.html
+```
+
+---
+
+## Backend
+
+Navigate to the backend database directory:
+
+```bash
+cd swasthyasetu_complete/Backend/Database
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Seed the development database:
+
+```bash
+node seed_database.js
+```
+
+Start the backend:
+
+```bash
+npm start
+```
+
+The API runs on:
+
+```text
+http://localhost:5000
+```
+
+Health check:
+
+```bash
+curl http://localhost:5000/health
+```
+
+---
+
+# 🐳 Docker Deployment
+
+The project includes Docker deployment configuration.
+
+```bash
+cd swasthyasetu_complete/Backend/Deployment
+
+docker-compose up -d
+```
+
+The architecture supports:
+
+* PostgreSQL
+* Redis
+* Node.js API
+* Nginx reverse proxy
+
+---
+
+# 🧪 Testing
+
+Run the backend test suite:
+
+```bash
+npm test
+```
+
+The project includes automated tests covering API and backend functionality.
+
+---
+
+# 🎯 Hackathon Demo Flow
+
+For a high-impact demonstration, the recommended flow is:
+
+### 01 — Show the Network
+
+Open **Mission Control** and introduce the healthcare network.
+
+### 02 — Show the Current State
+
+Demonstrate PHC status, inventory, demand and operational indicators.
+
+### 03 — Create an Emergency
+
+Trigger a scenario such as:
+
+**50% Patient Surge**
+
+### 04 — Show AI Detection
+
+Demonstrate how the platform identifies facilities under pressure.
+
+### 05 — Show AI Recommendation
+
+Display the recommended resource redistribution.
+
+### 06 — Explain the Decision
+
+Open the **AI Decision Trace**.
+
+### 07 — Show Projected Impact
+
+Compare the projected network state before and after intervention.
+
+### 08 — Human Approval
+
+Demonstrate the review → approve/reject workflow.
+
+### 09 — Audit Trail
+
+Show that the action is recorded for accountability.
+
+---
+
+# 🌟 What Makes SwasthyaSetu Different?
+
+Most healthcare dashboards are designed around **monitoring**.
+
+SwasthyaSetu is designed around **anticipation and coordinated decision-making**.
+
+```text
+Traditional Dashboard
+
+Data → Dashboard → Human Interpretation
+
+
+SwasthyaSetu
+
+Data
+ ↓
+AI Analysis
+ ↓
+Prediction
+ ↓
+Risk Detection
+ ↓
+Optimization
+ ↓
+Explanation
+ ↓
+Human Decision
+ ↓
+Auditable Action
+```
+
+The core idea is simple:
+
+> **Don't wait for a healthcare resource shortage to become a crisis. Detect the risk early, understand the cause, identify available resources elsewhere in the network, and support humans in taking coordinated action.**
+
+---
+
+# 🏆 Innovation Highlights
+
+### 🔮 Predictive Instead of Reactive
+
+Identifies potential future demand and resource pressure.
+
+### 🧠 Multi-Model Intelligence
+
+Combines forecasting, anomaly detection and optimization.
+
+### 🌐 Network-Level Thinking
+
+Connects facilities instead of treating each PHC independently.
+
+### 🧪 What-If Simulation
+
+Allows authorities to explore emergency scenarios before they occur.
+
+### 🔍 Explainable Recommendations
+
+Shows why an intervention was recommended.
+
+### 👤 Human-in-the-Loop
+
+AI recommends; authorized humans remain responsible for decisions.
+
+### 📋 Auditable
+
+Actions and approvals are recorded for accountability.
+
+### 🏗️ Deployment Ready
+
+Includes API architecture, database support, Docker configuration and testing infrastructure.
+
+---
+
+# 📌 Project Status
+
+**Status:** Hackathon Prototype / Functional Demonstration Platform
+
+The project includes:
+
+* Interactive frontend interfaces
+* Mission Control demonstration environment
+* Backend REST API
+* Database architecture
+* AI/ML components
+* Forecasting
+* Anomaly detection
+* Resource optimization
+* Emergency scenario simulation
+* Human approval workflows
+* RBAC authentication
+* Audit logging
+* Docker deployment configuration
+* Automated backend tests
+* Technical documentation
+
+---
+
+# 🔭 Future Roadmap
+
+SwasthyaSetu can be extended with real-world healthcare integrations such as:
+
+* Government health information systems
+* Real-time medicine inventory feeds
+* Hospital Management Systems
+* Pharmacy and warehouse systems
+* Ambulance and emergency response networks
+* Real-time bed occupancy feeds
+* Staff attendance systems
+* Epidemiological surveillance
+* Weather and disaster intelligence
+* State-wide federated learning
+* Privacy-preserving cross-district analytics
+* Mobile-first workflows for frontline healthcare workers
+
+The architecture is designed so that additional data sources can be integrated without changing the core decision-support workflow.
+
+---
+
+# 👥 Intended Users
+
+SwasthyaSetu is designed for:
+
+* Public Health Centre staff
+* District healthcare administrators
+* State health departments
+* Emergency coordinators
+* Healthcare supply-chain managers
+* Public health analysts
+* Government health planners
+
+---
+
+# ⚠️ Responsible AI
+
+SwasthyaSetu is a **decision-support prototype**.
+
+AI-generated forecasts and recommendations are intended to assist authorized healthcare personnel and should not replace professional judgment, official protocols, or emergency command structures.
+
+Scenario simulations represent projected outcomes under defined assumptions and should not be interpreted as guaranteed real-world results.
+
+---
+
+# 📜 License
+
+This project was developed as a hackathon prototype.
+
+Add the appropriate license before public production deployment.
+
+---
+
+# ❤️ Built With a Simple Mission
+
+### **Make healthcare resources smarter, faster, and more coordinated.**
+
+**SwasthyaSetu AI**
+
+> **From fragmented healthcare data → to predictive intelligence → to coordinated action.**
